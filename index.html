@@ -17,6 +17,7 @@
         body, html { margin: 0; padding: 0; height: 100%; width: 100%; font-family: 'Segoe UI', sans-serif; background-color: var(--bg-mint); color: var(--slate-green); overflow: hidden; }
         .main-container { display: flex; flex-direction: column; height: 100vh; padding: 12px; box-sizing: border-box; }
         
+        /* HEADER */
         .top-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-shrink: 0; }
         .branding h1 { font-size: 22px; font-weight: 700; margin: 0; color: var(--header-green); line-height: 1; }
         #date { font-size: 15px; color: var(--header-green); font-weight: 800; margin-top: 2px; }
@@ -29,10 +30,12 @@
         #time { font-size: 30px; font-weight: 800; line-height: 1; color: var(--header-green); }
         #weather-display { font-size: 12px; font-weight: 800; color: var(--header-green); margin-top: 2px; text-transform: uppercase; }
 
+        /* VIEW AREA */
         .view-content { flex: 1; position: relative; overflow: hidden; border-radius: 15px; }
         .view-pane { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; }
         .view-pane.active { display: flex; }
 
+        /* CALENDAR WRAPPER */
         .zoom-wrapper { 
             flex: 1; 
             border-radius: 15px; 
@@ -48,10 +51,11 @@
             height: calc(118% + 65px); 
             transform: scale(0.85); 
             transform-origin: 0 0;
-            margin-top: -55px; /* Aggressive header clip */
+            margin-top: -55px; /* Clips the top Google bar */
             filter: sepia(0.1) hue-rotate(100deg) brightness(1.05); 
         }
 
+        /* CHORES */
         .chores-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; flex: 1; padding-bottom: 8px; }
         .chore-col { border-radius: 15px; display: flex; flex-direction: column; border: 1px solid #eee; overflow: hidden; background: white; }
         .col-header { height: 35px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 15px; }
@@ -63,6 +67,7 @@
         .progress-fill { height: 100%; width: 0%; background: var(--header-green); transition: width 0.4s; }
         .progress-fill.gold { background: var(--gold); }
 
+        /* FAB & OVERLAY */
         #fab { position: fixed; bottom: 20px; right: 20px; width: 50px; height: 50px; background: #82c91e; color: white; border-radius: 50%; border: none; font-size: 28px; box-shadow: 0 6px 20px rgba(0,0,0,0.2); display: none; cursor: pointer; z-index: 2000; }
         #overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.98); z-index: 3000; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box; }
         .overlay-card { background: white; padding: 20px; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); width: 100%; max-width: 400px; }
@@ -201,8 +206,38 @@
         document.getElementById('pane-'+v).classList.add('active');
         document.getElementById('btn-'+v).classList.add('active');
         document.getElementById('fab').style.display = (v==='chores' || v==='term') ? 'block' : 'none';
+        if(v === 'week') snapToMorning();
     }
 
+    function snapToMorning() {
+        const frame = document.getElementById('iframe-week');
+        try {
+            // Attempt to scroll if browser allows
+            frame.contentWindow.scrollTo(0, 280);
+        } catch(e) { 
+            // Alternative: If cross-domain blocks scroll, we'll try a secondary nudge
+            console.log("Cross-domain scroll nudge attempted");
+        }
+    }
+
+    function updateCals() {
+        const ds = new Date().toISOString().slice(0,10).replace(/-/g,'');
+        const baseParams = `&showTitle=0&showNav=1&showDate=1&showTabs=0&showPrint=0&showCalendars=0&ctz=Australia%2FMelbourne&cb=${Date.now()}`;
+        
+        const c1 = "joesita@gmail.com";
+        const c2 = "bethanyrileysita@gmail.com";
+
+        const weekFrame = document.getElementById('iframe-week');
+        weekFrame.src = `https://calendar.google.com/calendar/u/0/embed?src=${c1}&color=%230B8043&src=${c2}&color=%23E67C73&mode=WEEK&dates=${ds}/${ds}${baseParams}`;
+        
+        document.getElementById('iframe-list').src = `https://calendar.google.com/calendar/u/0/embed?src=${c1}&color=%230B8043&src=${c2}&color=%23E67C73&mode=AGENDA&dates=${ds}/${ds}${baseParams}`;
+
+        weekFrame.onload = function() {
+            setTimeout(snapToMorning, 1000);
+        };
+    }
+
+    // Toggle Overlay Functions
     function toggleOverlay(show) {
         const overlay = document.getElementById('overlay');
         overlay.style.display = show ? 'flex' : 'none';
@@ -223,6 +258,7 @@
     function manualSync() { cloudLoad(); cloudSave(); }
     function setCP(p) { cPage = p; render(); document.getElementById('p-kids').classList.toggle('active', p==='kids'); document.getElementById('p-adults').classList.toggle('active', p==='adults'); }
 
+    // Init Member Selection
     const sel = document.getElementById('member-select-overlay');
     [...family.kids, ...family.adults].forEach(m => {
         const b = document.createElement('button'); b.className = `m-btn ${curM===m?'active':''}`; b.textContent = m;
@@ -230,26 +266,20 @@
         sel.appendChild(b);
     });
 
+    // Time & Date Refresh
     setInterval(() => {
         const n = new Date();
         document.getElementById('time').textContent = n.toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit', hour12: true }).toLowerCase();
         document.getElementById('date').textContent = n.toLocaleDateString('en-AU', { weekday: 'short', day: 'numeric', month: 'short' });
     }, 1000);
 
+    // Weather Refresh
     fetch('https://api.open-meteo.com/v1/forecast?latitude=-37.76&longitude=144.90&daily=weathercode,temperature_2m_max,temperature_2m_min&timezone=auto')
     .then(r => r.json()).then(d => {
         const icons = { 0: '☀️', 1: '🌤️', 2: '⛅', 3: '☁️', 61: '🌧️' };
         document.getElementById('w-icon').textContent = icons[d.daily.weathercode[0]] || '☀️';
         document.getElementById('w-temp').textContent = `${Math.round(d.daily.temperature_2m_min[0])}° / ${Math.round(d.daily.temperature_2m_max[0])}°`;
     });
-
-    function updateCals() {
-        const ds = new Date().toISOString().slice(0,10).replace(/-/g,'');
-        // KEY SETTING: hours=6-19
-        const p = `&showTitle=0&showNav=1&showDate=1&showTabs=0&showPrint=0&showCalendars=0&hours=6-19&cb=${Date.now()}`;
-        document.getElementById('iframe-list').src = `https://calendar.google.com/calendar/u/0/embed?src=joesita@gmail.com&color=%230B8043&src=bethanyrileysita@gmail.com&color=%23E67C73&mode=AGENDA&dates=${ds}/${ds}${p}`;
-        document.getElementById('iframe-week').src = `https://calendar.google.com/calendar/u/0/embed?src=joesita@gmail.com&color=%230B8043&src=bethanyrileysita@gmail.com&color=%23E67C73&mode=WEEK&dates=${ds}/${ds}&hours=6-19${p}`;
-    }
 
     updateCals(); cloudLoad(); setInterval(cloudLoad, 30000); 
 </script>
