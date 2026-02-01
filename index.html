@@ -7,12 +7,17 @@
     <style>
         :root {
             --bg-mint: #f0f7f4; --slate-green: #4a5d54; --header-green: #7ebfa4; 
+            --madi-h: #ffcceb; --ellie-h: #e5ccff; --joey-h: #cce5ff;
+            --mum-h: #c9e4d1;  --dad-h: #d9f2f2;   --snickers-h: #d7b899; 
+            --madi-bg: #fff0f9; --ellie-bg: #f7f0ff; --joey-bg: #f0f7ff;
+            --mum-bg: #f2f9f4;  --dad-bg: #f0fdfd;   --snickers-bg: #fcf8f4;
             --gold: #ffd700;
         }
 
         body, html { margin: 0; padding: 0; height: 100%; width: 100%; font-family: 'Segoe UI', sans-serif; background-color: var(--bg-mint); color: var(--slate-green); overflow: hidden; }
         .main-container { display: flex; flex-direction: column; height: 100vh; padding: 10px; box-sizing: border-box; }
         
+        /* HEADER */
         .top-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-shrink: 0; }
         .branding h1 { font-size: 20px; font-weight: 700; margin: 0; color: var(--header-green); }
         .view-toggle { background: rgba(0,0,0,0.05); border-radius: 50px; padding: 3px; display: flex; border: 1px solid rgba(0,0,0,0.1); }
@@ -21,42 +26,46 @@
         
         .time-weather { text-align: right; }
         #time { font-size: 28px; font-weight: 800; line-height: 1; color: var(--header-green); }
-        #weather-display { font-size: 10px; font-weight: 800; color: var(--header-green); text-transform: uppercase; }
 
+        /* VIEW CONTENT */
         .view-content { flex: 1; position: relative; overflow: hidden; border-radius: 12px; background: white; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
-        .view-pane { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; }
+        .view-pane { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; overflow-y: auto; }
         .view-pane.active { display: flex; }
         
-        /* CALENDAR WRAPPER */
         iframe { border: none; width: 100%; height: 100%; filter: sepia(0.1) hue-rotate(100deg) brightness(1.05); }
 
-        /* COMPACT CONTROL BUTTONS */
+        /* CHORES */
+        .chores-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 10px; }
+        .chore-col { border-radius: 12px; display: flex; flex-direction: column; border: 1px solid #eee; overflow: hidden; background: white; padding-bottom: 10px;}
+        .col-header { height: 35px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; }
+        .chore-list { padding: 8px; }
+        .chore-item { background: white; padding: 8px; margin-bottom: 5px; border-radius: 8px; display: flex; justify-content: space-between; border: 1px solid rgba(0,0,0,0.05); font-weight: 600; font-size: 11px; }
+        .chore-item.done { opacity: 0.4; text-decoration: line-through; border-left: 4px solid #ddd !important; }
+
+        /* NAV BUTTONS */
         .nav-fab { 
             position: fixed; width: 50px; height: 50px; 
             background: var(--header-green); color: white; border-radius: 50%; border: none; 
             font-size: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); 
             z-index: 99999 !important; cursor: pointer; display: none; align-items: center; justify-content: center;
-            touch-action: manipulation; visibility: visible !important;
         }
         
-        /* Week Nav (Top Corners) */
-        #prev-week { top: 80px; left: 20px; }
-        #next-week { top: 80px; right: 20px; }
+        /* Week Toggle (Left Side) */
+        #prev-week { bottom: 80px; left: 20px; }
+        #next-week { bottom: 20px; left: 20px; }
         
-        /* Scroll Nav (Bottom Corners) */
-        #scroll-up { bottom: 20px; left: 20px; background: var(--slate-green); }
-        #scroll-down { bottom: 20px; right: 20px; background: var(--slate-green); }
+        /* Scroll/Jump (Right Side) */
+        #jump-up { bottom: 80px; right: 20px; background: var(--slate-green); }
+        #jump-down { bottom: 20px; right: 20px; background: var(--slate-green); }
         
-        /* Add Button (Center Bottom) */
+        /* Add Button */
         #fab { bottom: 20px; left: 50%; transform: translateX(-50%); background: #82c91e; width: 60px; height: 60px; font-size: 30px; }
 
-        /* (Chore & Term styles remain the same as previous) */
-        .chores-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; flex: 1; padding: 10px; overflow: hidden; }
-        .chore-col { border-radius: 12px; display: flex; flex-direction: column; border: 1px solid #eee; overflow: hidden; background: white; }
-        .col-header { height: 35px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; }
-        .chore-list { flex: 1; padding: 8px; overflow-y: auto; }
-        .progress-container { width: 90%; background: rgba(0,0,0,0.1); height: 5px; border-radius: 10px; margin: 0 auto 8px; overflow: hidden; }
-        .progress-fill { height: 100%; width: 0%; background: var(--header-green); transition: width 0.4s; }
+        /* OVERLAY */
+        #overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.98); z-index: 100000; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
+        .overlay-card { background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); width: 100%; max-width: 450px; }
+        .m-btn { padding: 8px 12px; border-radius: 10px; border: 2px solid #eee; background: #f9f9f9; font-weight: 800; cursor: pointer; margin: 2px; font-size: 12px; }
+        .m-btn.active { background: var(--header-green); color: white; }
     </style>
 </head>
 <body>
@@ -70,70 +79,109 @@
             <button onclick="switchView('chores')" id="btn-chores" class="t-btn">Chores</button>
             <button onclick="switchView('term')" id="btn-term" class="t-btn">Term</button>
         </div>
-        <div class="time-weather">
-            <div id="time">00:00</div>
-            <div id="weather-display">--° ABERFELDIE</div>
-        </div>
+        <div class="time-weather"><div id="time">00:00</div></div>
     </div>
 
     <div class="view-content">
         <div id="pane-list" class="view-pane"><iframe id="iframe-list"></iframe></div>
         <div id="pane-week" class="view-pane active"><iframe id="iframe-week"></iframe></div>
-        <div id="pane-chores" class="view-pane">
-            <div id="chores-grid" class="chores-grid"></div>
-        </div>
-        <div id="pane-term" class="view-pane"><div id="term-list" style="padding:15px; column-count:2;"></div></div>
+        <div id="pane-chores" class="view-pane"><div id="chores-grid" class="chores-grid"></div></div>
+        <div id="pane-term" class="view-pane"><div id="term-list" style="padding:20px; column-count:2;"></div></div>
     </div>
 </div>
 
 <button id="prev-week" class="nav-fab" onclick="changeWeek(-7)">←</button>
 <button id="next-week" class="nav-fab" onclick="changeWeek(7)">→</button>
-<button id="scroll-up" class="nav-fab" onclick="scrollCal(-150)">↑</button>
-<button id="scroll-down" class="nav-fab" onclick="scrollCal(150)">↓</button>
+<button id="jump-up" class="nav-fab" onclick="setHours('6-14')">↑</button>
+<button id="jump-down" class="nav-fab" onclick="setHours('12-21')">↓</button>
 <button id="fab" class="nav-fab" onclick="toggleOverlay(true)">+</button>
+
+<div id="overlay">
+    <div class="overlay-card">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+            <h2 id="overlay-title" style="margin:0; font-size: 18px; color: var(--header-green);">Add Item</h2>
+            <button onclick="toggleOverlay(false)" style="background:none; border:none; font-size:24px; color:#ccc; cursor:pointer;">✕</button>
+        </div>
+        <div id="member-select-overlay" style="margin-bottom:15px; display:flex; flex-wrap:wrap; justify-content:center;"></div>
+        <input type="text" id="new-input" style="width:100%; padding:15px; font-size:16px; border-radius:12px; border:2px solid #eee; margin-bottom:15px; box-sizing:border-box;" placeholder="Enter details...">
+        <div style="display:flex; gap:10px;">
+            <button id="save-btn" style="flex:2; background:#82c91e; color:white; border:none; padding:15px; border-radius:12px; font-weight:800;">Add</button>
+            <button onclick="resetDaily(); toggleOverlay(false);" style="flex:1; background:#f0ad4e; color:white; border:none; padding:12px; border-radius:12px; font-weight:800;">Reset</button>
+        </div>
+    </div>
+</div>
 
 <script>
     const DB_URL = 'https://script.google.com/macros/s/AKfycbxfcQoQCWnlbfOX8jIJKLAuc8VuWknXYQ5WQSKZhXywoHQRub91tyS6gRPBKqFrn01bWg/exec';
-    let dateOffset = 0;
+    const family = { kids: ['Ellie', 'Joey', 'Madi'], adults: ['Mum', 'Dad', 'Snickers'] };
+    const mColors = { Ellie: '#e5ccff', Joey: '#cce5ff', Madi: '#ffcceb', Mum: '#c9e4d1', Dad: '#d9f2f2', Snickers: '#d7b899' };
+    const hColors = { Ellie: 'var(--ellie-h)', Joey: 'var(--joey-h)', Madi: 'var(--madi-h)', Mum: 'var(--mum-h)', Dad: 'var(--dad-h)', Snickers: 'var(--snickers-h)' };
+    const bgColors = { Ellie: 'var(--ellie-bg)', Joey: 'var(--joey-bg)', Madi: 'var(--madi-bg)', Mum: 'var(--mum-bg)', Dad: 'var(--dad-bg)', Snickers: 'var(--snickers-bg)' };
+    
+    let chores = [], term = [], curM = 'Ellie', cPage = 'kids', currentTab = 'week';
+    let dateOffset = 0, hourRange = '6-19';
 
-    function scrollCal(offset) {
-        const frame = document.getElementById('iframe-week');
-        // Browsers often block scrollTo across domains, but this is the cleanest attempt.
-        // If it persists in blocking, we can use the "Snap" method from earlier.
-        frame.contentWindow.scrollBy(0, offset);
+    async function cloudLoad() {
+        try {
+            const r = await fetch(DB_URL);
+            const d = await r.json();
+            chores = JSON.parse(d.chores || '[]');
+            term = JSON.parse(d.term || '[]');
+            render();
+        } catch(e) {}
     }
 
-    function switchView(v) {
-        document.querySelectorAll('.view-pane, .t-btn').forEach(el => el.classList.remove('active'));
-        document.getElementById('pane-'+v).classList.add('active');
-        document.getElementById('btn-'+v).classList.add('active');
-        
-        const isWeek = (v === 'week');
-        const isCal = (v === 'week' || v === 'list');
-        
-        document.getElementById('prev-week').style.display = isCal ? 'flex' : 'none';
-        document.getElementById('next-week').style.display = isCal ? 'flex' : 'none';
-        document.getElementById('scroll-up').style.display = isWeek ? 'flex' : 'none';
-        document.getElementById('scroll-down').style.display = isWeek ? 'flex' : 'none';
-        document.getElementById('fab').style.display = (v === 'chores' || v === 'term') ? 'flex' : 'none';
+    function render() {
+        const grid = document.getElementById('chores-grid');
+        grid.innerHTML = '';
+        family[cPage].forEach(m => {
+            const list = chores.filter(c => c.person === m);
+            const col = document.createElement('div');
+            col.className = 'chore-col'; col.style.backgroundColor = bgColors[m];
+            col.innerHTML = `<div class="col-header" style="background:${hColors[m]}">${m}</div><div class="chore-list" id="l-${m}"></div>`;
+            grid.appendChild(col);
+            list.forEach(c => {
+                const item = document.createElement('div');
+                item.className = `chore-item ${c.done?'done':''}`;
+                item.style.borderLeft = `6px solid ${mColors[m]}`;
+                item.innerHTML = `<span>${c.text}</span>`;
+                document.getElementById('l-'+m).appendChild(item);
+            });
+        });
     }
 
     function changeWeek(days) { dateOffset += days; updateCals(); }
+    function setHours(range) { hourRange = range; updateCals(); }
 
     function updateCals() {
         const d = new Date(); d.setDate(d.getDate() + dateOffset);
         const ds = d.toISOString().split('T')[0].replace(/-/g, '');
-        const params = `&showTitle=0&showNav=0&showDate=1&showTabs=0&showPrint=0&showCalendars=0&ctz=Australia/Melbourne&dates=${ds}/${ds}`;
+        const p = `&showTitle=0&showNav=0&showDate=1&showTabs=0&showPrint=0&showCalendars=0&ctz=Australia/Melbourne&hours=${hourRange}&dates=${ds}/${ds}`;
         const src = `&src=joesita@gmail.com&color=%230B8043&src=bethanyrileysita@gmail.com&color=%23E67C73`;
-        document.getElementById('iframe-list').src = `https://calendar.google.com/calendar/u/0/embed?mode=AGENDA${src}${params}`;
-        document.getElementById('iframe-week').src = `https://calendar.google.com/calendar/u/0/embed?mode=WEEK${src}${params}`;
+        document.getElementById('iframe-list').src = `https://calendar.google.com/calendar/u/0/embed?mode=AGENDA${src}${p}`;
+        document.getElementById('iframe-week').src = `https://calendar.google.com/calendar/u/0/embed?mode=WEEK${src}${p}`;
     }
 
-    // Force button render on start
-    window.onload = () => { setTimeout(() => { switchView('week'); }, 500); };
+    function switchView(v) {
+        currentTab = v;
+        document.querySelectorAll('.view-pane, .t-btn').forEach(el => el.classList.remove('active'));
+        document.getElementById('pane-'+v).classList.add('active');
+        document.getElementById('btn-'+v).classList.add('active');
+        
+        const isCal = (v === 'week' || v === 'list');
+        document.getElementById('prev-week').style.display = isCal ? 'flex' : 'none';
+        document.getElementById('next-week').style.display = isCal ? 'flex' : 'none';
+        document.getElementById('jump-up').style.display = (v === 'week') ? 'flex' : 'none';
+        document.getElementById('jump-down').style.display = (v === 'week') ? 'flex' : 'none';
+        document.getElementById('fab').style.display = (v === 'chores' || v === 'term') ? 'flex' : 'none';
+    }
+
+    function toggleOverlay(s) { document.getElementById('overlay').style.display = s ? 'flex' : 'none'; }
+    
+    // (Add Chores/Term logic here similar to previous versions)
 
     setInterval(() => { document.getElementById('time').textContent = new Date().toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit', hour12: true }).toLowerCase(); }, 1000);
-    updateCals();
+    updateCals(); cloudLoad();
 </script>
 </body>
 </html>
