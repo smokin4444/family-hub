@@ -15,41 +15,46 @@
         }
 
         body, html { margin: 0; padding: 0; height: 100%; width: 100%; font-family: 'Segoe UI', sans-serif; background-color: var(--bg-mint); color: var(--slate-green); overflow: hidden; }
-        .main-container { display: flex; flex-direction: column; height: 100vh; padding: 10px; box-sizing: border-box; }
+        .main-container { display: flex; flex-direction: column; height: 100vh; padding: 12px; box-sizing: border-box; }
         
         /* HEADER */
-        .top-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-shrink: 0; }
-        .branding h1 { font-size: 20px; font-weight: 700; margin: 0; color: var(--header-green); }
-        .view-toggle { background: rgba(0,0,0,0.05); border-radius: 50px; padding: 3px; display: flex; border: 1px solid rgba(0,0,0,0.1); }
-        .t-btn { padding: 6px 12px; border-radius: 40px; border: none; background: transparent; color: #a1b0aa; font-weight: 800; cursor: pointer; font-size: 11px; }
+        .top-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-shrink: 0; }
+        .branding h1 { font-size: 24px; font-weight: 700; margin: 0; color: var(--header-green); }
+        .view-toggle { background: rgba(0,0,0,0.05); border-radius: 50px; padding: 4px; display: flex; border: 1px solid rgba(0,0,0,0.1); }
+        .t-btn { padding: 8px 16px; border-radius: 40px; border: none; background: transparent; color: #a1b0aa; font-weight: 800; cursor: pointer; font-size: 13px; }
         .t-btn.active { background: white; color: var(--slate-green); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        #time { font-size: 28px; font-weight: 800; color: var(--header-green); text-align: right; min-width: 100px; }
+        #time { font-size: 32px; font-weight: 800; color: var(--header-green); text-align: right; min-width: 120px; }
 
         /* VIEW CONTENT */
-        .view-content { flex: 1; position: relative; overflow: hidden; border-radius: 12px; background: white; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
-        .view-pane { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; overflow-y: auto; }
+        .view-content { flex: 1; position: relative; overflow: hidden; border-radius: 15px; background: white; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        .view-pane { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; }
         .view-pane.active { display: flex; }
         iframe { border: none; width: 100%; height: 100%; filter: sepia(0.1) hue-rotate(100deg) brightness(1.05); }
 
-        /* CHORES & TERM GRID */
-        .chores-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 10px; }
-        .chore-col { border-radius: 12px; display: flex; flex-direction: column; border: 1px solid #eee; background: white; padding-bottom: 10px; }
-        .col-header { height: 35px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; border-bottom: 1px solid rgba(0,0,0,0.05); }
-        .chore-list, .term-list { padding: 8px; }
-        .chore-item { background: white; padding: 8px; margin-bottom: 5px; border-radius: 8px; display: flex; justify-content: space-between; border: 1px solid rgba(0,0,0,0.05); font-weight: 600; font-size: 11px; }
-        .chore-item.done { opacity: 0.4; text-decoration: line-through; border-left: 4px solid #ddd !important; }
+        /* CHORES */
+        .chores-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; flex: 1; padding: 15px; }
+        .chore-col { border-radius: 20px; display: flex; flex-direction: column; border: 1px solid #eee; overflow: hidden; background: white; }
+        .col-header { height: 45px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 18px; }
+        .chore-list { flex: 1; padding: 12px; overflow-y: auto; }
+        .chore-item { background: white; padding: 10px; margin-bottom: 6px; border-radius: 10px; display: flex; justify-content: space-between; border: 1px solid rgba(0,0,0,0.05); font-weight: 600; font-size: 14px; }
+        .chore-item.done { opacity: 0.4; text-decoration: line-through; border-left: 5px solid #ddd !important; }
 
-        /* JUMP BUTTONS (Vertical Right) */
-        .nav-fab { position: fixed; width: 50px; height: 50px; background: var(--header-green); color: white; border-radius: 50%; border: none; font-size: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 99999; cursor: pointer; display: none; align-items: center; justify-content: center; }
-        
-        #prev-week { bottom: 80px; left: 20px; }
-        #next-week { bottom: 20px; left: 20px; }
-        #jump-up { top: 120px; right: 20px; background: var(--slate-green); }
-        #jump-down { top: 180px; right: 20px; background: var(--slate-green); }
-        #fab { bottom: 20px; left: 50%; transform: translateX(-50%); background: #82c91e; width: 60px; height: 60px; font-size: 30px; }
+        /* NAVIGATION BUTTONS */
+        .nav-fab { 
+            position: fixed; bottom: 30px; width: 65px; height: 65px; 
+            background: var(--header-green); color: white; border-radius: 50%; border: none; 
+            font-size: 35px; box-shadow: 0 6px 20px rgba(0,0,0,0.2); 
+            z-index: 9999; cursor: pointer; display: none; align-items: center; justify-content: center;
+        }
+        #prev-week { left: 30px; }
+        #next-week { right: 30px; }
+        #fab { left: 50%; transform: translateX(-50%); background: #82c91e; }
 
-        #overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.98); z-index: 100000; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
-        .overlay-card { background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); width: 100%; max-width: 450px; }
+        /* OVERLAY */
+        #overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.98); z-index: 10000; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
+        .overlay-card { background: white; padding: 30px; border-radius: 25px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); width: 100%; max-width: 500px; }
+        .m-btn { padding: 10px 20px; border-radius: 12px; border: 2px solid #eee; background: #f9f9f9; font-weight: 800; cursor: pointer; margin: 4px; }
+        .m-btn.active { background: var(--header-green); color: white; border-color: var(--header-green); }
     </style>
 </head>
 <body>
@@ -69,28 +74,36 @@
     <div class="view-content">
         <div id="pane-list" class="view-pane"><iframe id="iframe-list"></iframe></div>
         <div id="pane-week" class="view-pane active"><iframe id="iframe-week"></iframe></div>
-        <div id="pane-chores" class="view-pane"><div id="chores-grid" class="chores-grid"></div></div>
+        
+        <div id="pane-chores" class="view-pane">
+            <div style="display:flex; justify-content:center; gap:10px; padding:15px;">
+                <button onclick="setCP('kids')" id="p-kids" class="m-btn active">Kids</button>
+                <button onclick="setCP('adults')" id="p-adults" class="m-btn">Parents & Snickers</button>
+            </div>
+            <div id="chores-grid" class="chores-grid"></div>
+        </div>
+
         <div id="pane-term" class="view-pane">
-            <div style="padding: 10px;"><h2 style="color:var(--header-green); font-size:18px;">📅 Term Tasks</h2></div>
-            <div id="term-list" style="column-count: 2; padding: 10px;"></div>
+            <div style="padding: 30px; overflow-y: auto;">
+                <h2 style="color:var(--header-green); margin-top:0;">📅 School Term Tasks</h2>
+                <div id="term-list" style="column-count: 2; column-gap: 30px;"></div>
+            </div>
         </div>
     </div>
 </div>
 
 <button id="prev-week" class="nav-fab" onclick="changeWeek(-7)">←</button>
 <button id="next-week" class="nav-fab" onclick="changeWeek(7)">→</button>
-<button id="jump-up" class="nav-fab" onclick="setHours('6-14')">↑</button>
-<button id="jump-down" class="nav-fab" onclick="setHours('12-21')">↓</button>
 <button id="fab" class="nav-fab" onclick="toggleOverlay(true)">+</button>
 
 <div id="overlay">
     <div class="overlay-card">
-        <h2 id="overlay-title" style="color: var(--header-green);">Add Item</h2>
-        <div id="member-select-overlay" style="margin-bottom:15px; display:flex; flex-wrap:wrap; gap:5px;"></div>
-        <input type="text" id="new-input" style="width:100%; padding:15px; font-size:16px; border-radius:12px; border:2px solid #eee; margin-bottom:15px; box-sizing:border-box;" placeholder="Enter text...">
+        <h2 id="overlay-title" style="color:var(--header-green); margin-top:0;">Add Task</h2>
+        <div id="member-select-overlay" style="margin-bottom:20px; display:flex; flex-wrap:wrap; justify-content:center;"></div>
+        <input type="text" id="new-input" style="width:100%; padding:20px; font-size:18px; border-radius:15px; border:1px solid #ddd; margin-bottom:20px; box-sizing:border-box;" placeholder="Enter details...">
         <div style="display:flex; gap:10px;">
-            <button id="save-btn" style="flex:2; background:#82c91e; color:white; border:none; padding:15px; border-radius:12px; font-weight:800;">Add</button>
-            <button onclick="toggleOverlay(false)" style="flex:1; background:#ccc; border:none; padding:12px; border-radius:12px; font-weight:800;">Close</button>
+            <button id="save-btn" style="flex:2; background:#82c91e; color:white; border:none; padding:15px; border-radius:15px; font-weight:800;">Add</button>
+            <button onclick="toggleOverlay(false)" style="flex:1; background:#ccc; border:none; padding:15px; border-radius:15px; font-weight:800;">Close</button>
         </div>
     </div>
 </div>
@@ -102,8 +115,7 @@
     const hColors = { Ellie: 'var(--ellie-h)', Joey: 'var(--joey-h)', Madi: 'var(--madi-h)', Mum: 'var(--mum-h)', Dad: 'var(--dad-h)', Snickers: 'var(--snickers-h)' };
     const bgColors = { Ellie: 'var(--ellie-bg)', Joey: 'var(--joey-bg)', Madi: 'var(--madi-bg)', Mum: 'var(--mum-bg)', Dad: 'var(--dad-bg)', Snickers: 'var(--snickers-bg)' };
     
-    let chores = [], term = [], curM = 'Ellie', cPage = 'kids', currentTab = 'week';
-    let dateOffset = 0, hourRange = '6-19';
+    let chores = [], term = [], curM = 'Ellie', cPage = 'kids', currentTab = 'week', dateOffset = 0;
 
     async function cloudLoad() {
         try {
@@ -116,36 +128,31 @@
     }
 
     function render() {
-        const grid = document.getElementById('chores-grid'); grid.innerHTML = '';
+        const grid = document.getElementById('chores-grid'); if(!grid) return;
+        grid.innerHTML = '';
         family[cPage].forEach(m => {
-            const col = document.createElement('div'); col.className = 'chore-col'; col.style.backgroundColor = bgColors[m];
+            const list = chores.filter(c => c.person === m);
+            const col = document.createElement('div');
+            col.className = 'chore-col'; col.style.backgroundColor = bgColors[m];
             col.innerHTML = `<div class="col-header" style="background:${hColors[m]}">${m}</div><div class="chore-list" id="l-${m}"></div>`;
             grid.appendChild(col);
-            chores.filter(c => c.person === m).forEach(c => {
-                const item = document.createElement('div'); item.className = `chore-item ${c.done?'done':''}`; item.style.borderLeft = `6px solid ${mColors[m]}`;
-                item.innerHTML = `<span>${c.text}</span><span onclick="delChore('${c.id}')" style="color:#ccc">✕</span>`;
+            list.forEach(c => {
+                const item = document.createElement('div');
+                item.className = `chore-item ${c.done?'done':''}`;
+                item.style.borderLeft = `8px solid ${mColors[m]}`;
+                item.innerHTML = `<span onclick="toggleChore('${c.id}')" style="flex:1;">${c.text}</span><span onclick="delChore('${c.id}')" style="color:#ccc">✕</span>`;
                 document.getElementById('l-'+m).appendChild(item);
             });
         });
 
-        const tList = document.getElementById('term-list'); tList.innerHTML = '';
+        const tList = document.getElementById('term-list'); if(!tList) return;
+        tList.innerHTML = '';
         term.forEach((t, i) => {
-            const item = document.createElement('div'); item.className = 'chore-item'; item.style.borderLeft = '6px solid var(--header-green)';
+            const item = document.createElement('div');
+            item.className = 'chore-item'; item.style.borderLeft = '8px solid var(--header-green)';
             item.innerHTML = `<span>${t}</span><span onclick="delTerm(${i})" style="color:#ccc">✕</span>`;
             tList.appendChild(item);
         });
-    }
-
-    function changeWeek(days) { dateOffset += days; updateCals(); }
-    function setHours(range) { hourRange = range; updateCals(); }
-
-    function updateCals() {
-        const d = new Date(); d.setDate(d.getDate() + dateOffset);
-        const ds = d.toISOString().split('T')[0].replace(/-/g, '');
-        const p = `&showTitle=0&showNav=0&showDate=1&showTabs=0&showPrint=0&showCalendars=0&ctz=Australia/Melbourne&hours=${hourRange}&dates=${ds}/${ds}`;
-        const src = `&src=joesita@gmail.com&color=%230B8043&src=bethanyrileysita@gmail.com&color=%23E67C73`;
-        document.getElementById('iframe-list').src = `https://calendar.google.com/calendar/u/0/embed?mode=AGENDA${src}${p}`;
-        document.getElementById('iframe-week').src = `https://calendar.google.com/calendar/u/0/embed?mode=WEEK${src}${p}`;
     }
 
     function switchView(v) {
@@ -153,20 +160,30 @@
         document.querySelectorAll('.view-pane, .t-btn').forEach(el => el.classList.remove('active'));
         document.getElementById('pane-'+v).classList.add('active');
         document.getElementById('btn-'+v).classList.add('active');
-        const isWeek = (v === 'week'); const isCal = (v === 'week' || v === 'list');
+        const isCal = (v === 'week' || v === 'list');
         document.getElementById('prev-week').style.display = isCal ? 'flex' : 'none';
         document.getElementById('next-week').style.display = isCal ? 'flex' : 'none';
-        document.getElementById('jump-up').style.display = isWeek ? 'flex' : 'none';
-        document.getElementById('jump-down').style.display = isWeek ? 'flex' : 'none';
         document.getElementById('fab').style.display = (v === 'chores' || v === 'term') ? 'flex' : 'none';
     }
 
+    function setCP(p) { cPage = p; render(); document.getElementById('p-kids').classList.toggle('active', p==='kids'); document.getElementById('p-adults').classList.toggle('active', p==='adults'); }
+    function changeWeek(days) { dateOffset += days; updateCals(); }
+
+    function updateCals() {
+        const d = new Date(); d.setDate(d.getDate() + dateOffset);
+        const ds = d.toISOString().split('T')[0].replace(/-/g, '');
+        const p = `&showTitle=0&showNav=0&showDate=1&showTabs=0&showPrint=0&showCalendars=0&ctz=Australia/Melbourne&dates=${ds}/${ds}`;
+        const src = `&src=joesita@gmail.com&color=%230B8043&src=bethanyrileysita@gmail.com&color=%23E67C73`;
+        document.getElementById('iframe-list').src = `https://calendar.google.com/calendar/u/0/embed?mode=AGENDA${src}${p}`;
+        document.getElementById('iframe-week').src = `https://calendar.google.com/calendar/u/0/embed?mode=WEEK${src}${p}`;
+    }
+
     function toggleOverlay(s) { document.getElementById('overlay').style.display = s ? 'flex' : 'none'; }
-    function addChore() { const v = document.getElementById('new-input').value; if(v) { chores.push({id: 'u-'+Date.now(), text: v, person: curM, done: false}); document.getElementById('new-input').value=''; render(); } }
+    function toggleChore(id) { const c = chores.find(x => x.id === id); c.done = !c.done; render(); }
     function delChore(id) { chores = chores.filter(c => c.id !== id); render(); }
     function delTerm(i) { term.splice(i, 1); render(); }
 
-    setInterval(() => { document.getElementById('time').textContent = new Date().toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit', hour12: true }); }, 1000);
+    setInterval(() => { document.getElementById('time').textContent = new Date().toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit', hour12: true }).toLowerCase(); }, 1000);
     updateCals(); cloudLoad();
 </script>
 </body>
