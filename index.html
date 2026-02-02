@@ -22,26 +22,28 @@
         body, html { margin: 0; padding: 0; height: 100%; width: 100%; font-family: 'Segoe UI', sans-serif; background-color: var(--bg-mint); color: var(--slate-green); overflow: hidden; }
         .main-container { display: flex; flex-direction: column; height: 100vh; padding: 10px; box-sizing: border-box; }
         
-        /* HEADER */
         .top-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-shrink: 0; }
         .branding { display: flex; align-items: center; gap: 8px; }
         .branding h1 { font-size: 22px; font-weight: 700; margin: 0; color: var(--header-green); }
-        .refresh-btn { font-size: 20px; color: var(--header-green); background: none; border: none; cursor: pointer; padding: 0; }
+        .refresh-btn { font-size: 20px; color: var(--header-green); background: none; border: none; cursor: pointer; }
 
         .view-toggle { background: rgba(0,0,0,0.05); border-radius: 50px; padding: 3px; display: flex; border: 1px solid rgba(0,0,0,0.1); }
         .t-btn { padding: 6px 12px; border-radius: 40px; border: none; background: transparent; color: #a1b0aa; font-weight: 800; cursor: pointer; font-size: 11px; }
         .t-btn.active { background: white; color: var(--slate-green); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        #time { font-size: 28px; font-weight: 800; color: var(--header-green); min-width: 100px; text-align: right; }
+        
+        .time-weather { text-align: right; min-width: 170px; }
+        #time { font-size: 28px; font-weight: 800; line-height: 1; color: var(--header-green); margin-bottom: 2px; }
+        #weather-display { font-size: 11px; font-weight: 800; color: var(--header-green); text-transform: uppercase; }
 
-        /* CONTENT & CROP */
+        /* UPDATED CROP: Shallow crop to keep day names */
         .view-content { flex: 1; position: relative; overflow: hidden; border-radius: 15px; background: white; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
         .view-pane { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; overflow-y: auto; }
         .view-pane.active { display: flex; }
         
         .cal-container { width: 100%; height: 100%; overflow: hidden; position: relative; }
-        iframe { position: absolute; top: -80px; width: 100%; height: calc(100% + 80px); border: none; filter: sepia(0.1) hue-rotate(100deg) brightness(1.05); }
+        iframe { position: absolute; top: -40px; width: 100%; height: calc(100% + 40px); border: none; filter: sepia(0.1) hue-rotate(100deg) brightness(1.05); }
 
-        /* CHORES */
+        /* CHORES & TERM */
         .chores-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 10px; }
         .chore-col { border-radius: 12px; border: 1px solid #eee; overflow: hidden; background: white; padding-bottom: 10px; }
         .col-header { height: 35px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; }
@@ -49,14 +51,15 @@
         .chore-item { background: white; padding: 8px; margin-bottom: 5px; border-radius: 8px; display: flex; justify-content: space-between; border: 1px solid rgba(0,0,0,0.05); font-weight: 600; font-size: 11px; }
         .chore-item.done { opacity: 0.4; text-decoration: line-through; border-left: 4px solid #ddd !important; }
 
-        /* NAV BUTTONS */
         .nav-fab { position: fixed; width: 55px; height: 55px; background: var(--header-green); color: white; border-radius: 50%; border: none; font-size: 28px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 99999; cursor: pointer; display: none; align-items: center; justify-content: center; }
         #prev-week { bottom: 25px; left: 25px; }
         #next-week { bottom: 25px; right: 25px; }
-        #fab { bottom: 25px; right: 25px; background: #82c91e; } /* Positioned right */
+        #fab { bottom: 25px; right: 25px; background: #82c91e; }
 
         #overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.98); z-index: 100000; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
         .overlay-card { background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); width: 100%; max-width: 450px; }
+        .m-btn { padding: 8px 16px; border-radius: 10px; border: 2px solid #eee; background: #f9f9f9; font-weight: 800; cursor: pointer; margin: 3px; font-size: 12px; }
+        .m-btn.active { background: var(--header-green); color: white; border-color: var(--header-green); }
     </style>
 </head>
 <body>
@@ -73,7 +76,10 @@
             <button onclick="switchView('chores')" id="btn-chores" class="t-btn">Chores</button>
             <button onclick="switchView('term')" id="btn-term" class="t-btn">Term</button>
         </div>
-        <div id="time">--:--</div>
+        <div class="time-weather">
+            <div id="time">00:00</div>
+            <div id="weather-display">--° ABERFELDIE</div>
+        </div>
     </div>
 
     <div class="view-content">
@@ -81,8 +87,8 @@
         <div id="pane-week" class="view-pane active"><div class="cal-container"><iframe id="iframe-week"></iframe></div></div>
         <div id="pane-chores" class="view-pane">
             <div style="display:flex; justify-content:center; gap:8px; padding:10px;">
-                <button onclick="setCP('kids')" id="p-kids" class="t-btn active" style="background:#eee; color:#444">Kids</button>
-                <button onclick="setCP('adults')" id="p-adults" class="t-btn" style="background:#eee; color:#444">Parents</button>
+                <button onclick="setCP('kids')" id="p-kids" class="m-btn active">Kids</button>
+                <button onclick="setCP('adults')" id="p-adults" class="m-btn">Parents</button>
             </div>
             <div id="chores-grid" class="chores-grid"></div>
         </div>
@@ -101,7 +107,7 @@
     <div class="overlay-card">
         <h2 id="overlay-title" style="color: var(--header-green);">Add Item</h2>
         <div id="member-select-overlay" style="margin-bottom:15px; display:flex; flex-wrap:wrap; gap:5px;"></div>
-        <input type="text" id="new-input" style="width:100%; padding:15px; font-size:16px; border-radius:12px; border:2px solid #eee; margin-bottom:15px; box-sizing:border-box;" placeholder="Enter text...">
+        <input type="text" id="new-input" style="width:100%; padding:15px; font-size:16px; border-radius:12px; border:2px solid #eee; margin-bottom:15px; box-sizing:border-box;" placeholder="Enter details...">
         <div style="display:flex; gap:10px;">
             <button onclick="addItem()" style="flex:2; background:#82c91e; color:white; border:none; padding:15px; border-radius:12px; font-weight:800;">Add</button>
             <button onclick="toggleOverlay(false)" style="flex:1; background:#ccc; border:none; padding:12px; border-radius:12px; font-weight:800;">Close</button>
@@ -125,7 +131,7 @@
             chores = JSON.parse(d.chores || '[]');
             term = JSON.parse(d.term || '[]');
             render();
-        } catch(e) { console.error("Cloud load failed"); }
+        } catch(e) {}
     }
 
     async function cloudSave() {
@@ -144,7 +150,7 @@
             chores.filter(c => c.person === m).forEach(c => {
                 const item = document.createElement('div'); item.className = `chore-item ${c.done?'done':''}`;
                 item.style.borderLeft = `6px solid ${mColors[m]}`;
-                item.innerHTML = `<span onclick="toggleItem('${c.id}')" style="flex:1;">${c.text}</span><span onclick="deleteItem('${c.id}')" style="color:#ccc; padding:0 5px;">✕</span>`;
+                item.innerHTML = `<span onclick="toggleItem('${c.id}')" style="flex:1;">${c.text}</span><span onclick="deleteItem('${c.id}')" style="color:#ccc">✕</span>`;
                 document.getElementById('l-'+m).appendChild(item);
             });
         });
@@ -152,10 +158,22 @@
         const tList = document.getElementById('term-list'); if(!tList) return;
         tList.innerHTML = '';
         term.forEach((t, i) => {
-            const item = document.createElement('div'); item.className = 'chore-item'; item.style.borderLeft = '6px solid var(--header-green)';
-            item.innerHTML = `<span>${t}</span><span onclick="deleteTerm(${i})" style="color:#ccc; padding:0 5px;">✕</span>`;
+            const item = document.createElement('div'); item.className = 'chore-item'; item.style.borderLeft = '8px solid var(--header-green)';
+            item.innerHTML = `<span>${t}</span><span onclick="deleteTerm(${i})" style="color:#ccc">✕</span>`;
             tList.appendChild(item);
         });
+    }
+
+    async function fetchWeather() {
+        try {
+            const r = await fetch('https://api.open-meteo.com/v1/forecast?latitude=-37.76&longitude=144.90&current=temperature_2m,weather_code&daily=temperature_2m_max,temperature_2m_min&timezone=Australia/Melbourne');
+            const d = await r.json();
+            const codes = { 0: '☀️', 1: '🌤️', 2: '⛅', 3: '☁️', 61: '🌧️', 80: '🌦️' };
+            const curr = Math.round(d.current.temperature_2m);
+            const high = Math.round(d.daily.temperature_2m_max[0]);
+            const low = Math.round(d.daily.temperature_2m_min[0]);
+            document.getElementById('weather-display').innerHTML = `${codes[d.current.weather_code] || '☀️'} ${curr}° (${low}° / ${high}°) ABERFELDIE`;
+        } catch(e) {}
     }
 
     function switchView(v) {
@@ -204,7 +222,7 @@
     }
 
     setInterval(() => { document.getElementById('time').textContent = new Date().toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit', hour12: true }).toLowerCase(); }, 1000);
-    updateCals(); cloudLoad();
+    setInterval(fetchWeather, 900000); updateCals(); fetchWeather(); cloudLoad();
 </script>
 </body>
 </html>
