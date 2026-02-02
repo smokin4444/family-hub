@@ -7,7 +7,6 @@
     
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="manifest" href="manifest.json">
 
     <style>
@@ -22,53 +21,63 @@
 
         body, html { margin: 0; padding: 0; height: 100%; width: 100%; font-family: 'Segoe UI', sans-serif; background-color: var(--bg-mint); color: var(--slate-green); overflow: hidden; }
         
-        /* Main container respects the tablet's safe area (avoids notches/nav bars) */
         .main-container { 
             display: flex; flex-direction: column; height: 100vh; 
-            padding: calc(12px + env(safe-area-inset-top)) 12px calc(12px + env(safe-area-inset-bottom)) 12px; 
+            padding: calc(10px + env(safe-area-inset-top)) 10px calc(10px + env(safe-area-inset-bottom)) 10px; 
             box-sizing: border-box; 
         }
         
-        .top-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-shrink: 0; }
-        .branding h1 { font-size: 24px; font-weight: 700; margin: 0; color: var(--header-green); }
-        
+        .top-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-shrink: 0; }
+        .branding h1 { font-size: 22px; font-weight: 700; margin: 0; color: var(--header-green); }
         .view-toggle { background: rgba(0,0,0,0.05); border-radius: 50px; padding: 4px; display: flex; border: 1px solid rgba(0,0,0,0.1); }
-        .t-btn { padding: 8px 16px; border-radius: 40px; border: none; background: transparent; color: #a1b0aa; font-weight: 800; cursor: pointer; font-size: 13px; }
+        .t-btn { padding: 6px 12px; border-radius: 40px; border: none; background: transparent; color: #a1b0aa; font-weight: 800; cursor: pointer; font-size: 12px; }
         .t-btn.active { background: white; color: var(--slate-green); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
         
         .time-weather { text-align: right; min-width: 170px; }
-        #time { font-size: 32px; font-weight: 800; line-height: 1; color: var(--header-green); margin-bottom: 2px; }
-        #weather-display { font-size: 12px; font-weight: 800; color: var(--header-green); text-transform: uppercase; }
+        #time { font-size: 30px; font-weight: 800; line-height: 1; color: var(--header-green); margin-bottom: 2px; }
+        #weather-display { font-size: 11px; font-weight: 800; color: var(--header-green); text-transform: uppercase; }
 
+        /* THE FIX: Calendar Wrapper to Clip Header */
         .view-content { flex: 1; position: relative; overflow: hidden; border-radius: 15px; background: white; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
         .view-pane { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; }
         .view-pane.active { display: flex; }
         
-        iframe { border: none; width: 100%; height: 100%; filter: sepia(0.1) hue-rotate(100deg) brightness(1.05); }
+        /* Cropping logic: Move the iframe UP by 45px and make it taller to compensate */
+        .cal-wrapper { width: 100%; height: 100%; overflow: hidden; position: relative; }
+        iframe { 
+            position: absolute;
+            border: none; 
+            width: 100%; 
+            height: calc(100% + 45px); 
+            top: -45px; /* This hides the bulky Mon/Tue header */
+            filter: sepia(0.1) hue-rotate(100deg) brightness(1.05); 
+        }
 
-        .chores-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; flex: 1; padding: 15px; }
+        .chores-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; flex: 1; padding: 12px; }
         .chore-col { border-radius: 20px; display: flex; flex-direction: column; border: 1px solid #eee; overflow: hidden; background: white; }
-        .col-header { height: 45px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 18px; }
-        .chore-list { flex: 1; padding: 12px; overflow-y: auto; }
-        .chore-item { background: white; padding: 10px; margin-bottom: 6px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(0,0,0,0.05); font-weight: 600; font-size: 14px; }
+        .col-header { height: 40px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 16px; }
+        .chore-list { flex: 1; padding: 10px; overflow-y: auto; }
+        .chore-item { background: white; padding: 10px; margin-bottom: 5px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(0,0,0,0.05); font-weight: 600; font-size: 13px; }
         .chore-item.done { opacity: 0.4; text-decoration: line-through; border-left: 5px solid #ddd !important; }
 
-        /* NAV BUTTONS WITH SAFE AREA PROTECTION */
+        .progress-container { width: 90%; background: rgba(0,0,0,0.1); height: 6px; border-radius: 10px; margin: 0 auto 8px; overflow: hidden; }
+        .progress-fill { height: 100%; width: 0%; background: var(--header-green); transition: width 0.4s; }
+
         .nav-fab { 
             position: fixed; 
-            bottom: calc(30px + env(safe-area-inset-bottom)); 
-            width: 65px; height: 65px; 
+            bottom: calc(25px + env(safe-area-inset-bottom)); 
+            width: 60px; height: 60px; 
             background: var(--header-green); color: white; border-radius: 50%; border: none; 
-            font-size: 35px; box-shadow: 0 6px 20px rgba(0,0,0,0.2); 
+            font-size: 30px; box-shadow: 0 6px 20px rgba(0,0,0,0.2); 
             z-index: 9999; cursor: pointer; display: none; align-items: center; justify-content: center; 
         }
-        #prev-week { left: calc(30px + env(safe-area-inset-left)); }
-        #next-week { right: calc(30px + env(safe-area-inset-right)); }
-        #fab { right: calc(30px + env(safe-area-inset-right)); background: #82c91e; }
+        #prev-week { left: calc(25px + env(safe-area-inset-left)); }
+        #next-week { right: calc(25px + env(safe-area-inset-right)); }
+        #fab { right: calc(25px + env(safe-area-inset-right)); background: #82c91e; }
 
         #overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.98); z-index: 10000; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
-        .overlay-card { background: white; padding: 30px; border-radius: 25px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); width: 100%; max-width: 500px; }
-        .m-btn { padding: 10px 20px; border-radius: 12px; border: 2px solid #eee; background: #f9f9f9; font-weight: 800; cursor: pointer; margin: 4px; }
+        .overlay-card { background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); width: 100%; max-width: 480px; }
+        .m-btn { padding: 8px 16px; border-radius: 10px; border: 2px solid #eee; background: #f9f9f9; font-weight: 800; cursor: pointer; margin: 3px; font-size: 13px; }
         .m-btn.active { background: var(--header-green); color: white; border-color: var(--header-green); }
     </style>
 </head>
@@ -90,19 +99,21 @@
     </div>
 
     <div class="view-content">
-        <div id="pane-list" class="view-pane"><iframe id="iframe-list"></iframe></div>
-        <div id="pane-week" class="view-pane active"><iframe id="iframe-week"></iframe></div>
+        <div id="pane-list" class="view-pane"><div class="cal-wrapper"><iframe id="iframe-list"></iframe></div></div>
+        <div id="pane-week" class="view-pane active"><div class="cal-wrapper"><iframe id="iframe-week"></iframe></div></div>
+        
         <div id="pane-chores" class="view-pane">
-            <div style="display:flex; justify-content:center; gap:10px; padding:15px;">
+            <div style="display:flex; justify-content:center; gap:8px; padding:10px;">
                 <button onclick="setCP('kids')" id="p-kids" class="m-btn active">Kids</button>
                 <button onclick="setCP('adults')" id="p-adults" class="m-btn">Parents & Snickers</button>
             </div>
             <div id="chores-grid" class="chores-grid"></div>
         </div>
+
         <div id="pane-term" class="view-pane">
-            <div style="padding: 30px; overflow-y: auto;">
-                <h2 style="color:var(--header-green); margin-top:0;">📅 School Term Tasks</h2>
-                <div id="term-list" style="column-count: 2; column-gap: 30px;"></div>
+            <div style="padding: 20px; overflow-y: auto;">
+                <h2 style="color:var(--header-green); margin-top:0; font-size: 20px;">📅 Term Tasks</h2>
+                <div id="term-list" style="column-count: 2; column-gap: 20px;"></div>
             </div>
         </div>
     </div>
@@ -114,12 +125,12 @@
 
 <div id="overlay">
     <div class="overlay-card">
-        <h2 id="overlay-title" style="color:var(--header-green); margin-top:0;">Add Task</h2>
-        <div id="member-select-overlay" style="margin-bottom:20px; display:flex; flex-wrap:wrap; justify-content:center;"></div>
-        <input type="text" id="new-input" style="width:100%; padding:20px; font-size:18px; border-radius:15px; border:1px solid #ddd; margin-bottom:20px; box-sizing:border-box;" placeholder="Enter details...">
+        <h2 id="overlay-title" style="color:var(--header-green); margin-top:0; font-size: 20px;">Add Task</h2>
+        <div id="member-select-overlay" style="margin-bottom:15px; display:flex; flex-wrap:wrap; justify-content:center;"></div>
+        <input type="text" id="new-input" style="width:100%; padding:15px; font-size:16px; border-radius:12px; border:1px solid #ddd; margin-bottom:15px; box-sizing:border-box;" placeholder="Enter details...">
         <div style="display:flex; gap:10px;">
-            <button onclick="addItem()" style="flex:2; background:#82c91e; color:white; border:none; padding:15px; border-radius:15px; font-weight:800; font-size:18px;">Add</button>
-            <button onclick="toggleOverlay(false)" style="flex:1; background:#ccc; border:none; padding:15px; border-radius:15px; font-weight:800;">Close</button>
+            <button onclick="addItem()" style="flex:2; background:#82c91e; color:white; border:none; padding:12px; border-radius:12px; font-weight:800; font-size:16px;">Add</button>
+            <button onclick="toggleOverlay(false)" style="flex:1; background:#ccc; border:none; padding:12px; border-radius:12px; font-weight:800;">Close</button>
         </div>
     </div>
 </div>
@@ -206,7 +217,7 @@
     function toggleItem(id) { const c = chores.find(x => x.id === id); c.done = !c.done; render(); cloudSave(); }
     function deleteItem(id) { chores = chores.filter(x => x.id !== id); render(); cloudSave(); }
     function deleteTerm(i) { term.splice(i, 1); render(); cloudSave(); }
-    function setCP(p) { cPage = p; render(); document.querySelectorAll('#pane-chores .m-btn').forEach(b => b.classList.toggle('active', b.innerText.includes(p === 'kids' ? 'Kids' : 'Parents'))); }
+    function setCP(p) { cPage = p; render(); document.querySelectorAll('#pane-chores .m-btn').forEach(b => b.classList.remove('active')); event.target.classList.add('active'); }
     function changeWeek(days) { dateOffset += days; updateCals(); }
 
     function updateCals() {
@@ -233,7 +244,7 @@
     }
 
     setInterval(() => { document.getElementById('time').textContent = new Date().toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit', hour12: true }).toLowerCase(); }, 1000);
-    setInterval(fetchWeather, 900000); 
+    setInterval(fetchWeather, 900000); // 15 min refresh
     setInterval(cloudLoad, 30000);
     updateCals(); fetchWeather(); cloudLoad();
 </script>
