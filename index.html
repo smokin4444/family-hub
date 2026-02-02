@@ -2,8 +2,14 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Sita Family Hub</title>
+    
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="manifest" href="manifest.json">
+
     <style>
         :root {
             --bg-mint: #f0f7f4; --slate-green: #4a5d54; --header-green: #7ebfa4; 
@@ -15,15 +21,22 @@
         }
 
         body, html { margin: 0; padding: 0; height: 100%; width: 100%; font-family: 'Segoe UI', sans-serif; background-color: var(--bg-mint); color: var(--slate-green); overflow: hidden; }
-        .main-container { display: flex; flex-direction: column; height: 100vh; padding: 12px; box-sizing: border-box; }
+        
+        /* Main container respects the tablet's safe area (avoids notches/nav bars) */
+        .main-container { 
+            display: flex; flex-direction: column; height: 100vh; 
+            padding: calc(12px + env(safe-area-inset-top)) 12px calc(12px + env(safe-area-inset-bottom)) 12px; 
+            box-sizing: border-box; 
+        }
         
         .top-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-shrink: 0; }
         .branding h1 { font-size: 24px; font-weight: 700; margin: 0; color: var(--header-green); }
+        
         .view-toggle { background: rgba(0,0,0,0.05); border-radius: 50px; padding: 4px; display: flex; border: 1px solid rgba(0,0,0,0.1); }
         .t-btn { padding: 8px 16px; border-radius: 40px; border: none; background: transparent; color: #a1b0aa; font-weight: 800; cursor: pointer; font-size: 13px; }
         .t-btn.active { background: white; color: var(--slate-green); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
         
-        .time-weather { text-align: right; min-width: 140px; }
+        .time-weather { text-align: right; min-width: 170px; }
         #time { font-size: 32px; font-weight: 800; line-height: 1; color: var(--header-green); margin-bottom: 2px; }
         #weather-display { font-size: 12px; font-weight: 800; color: var(--header-green); text-transform: uppercase; }
 
@@ -40,13 +53,18 @@
         .chore-item { background: white; padding: 10px; margin-bottom: 6px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(0,0,0,0.05); font-weight: 600; font-size: 14px; }
         .chore-item.done { opacity: 0.4; text-decoration: line-through; border-left: 5px solid #ddd !important; }
 
-        .progress-container { width: 90%; background: rgba(0,0,0,0.1); height: 6px; border-radius: 10px; margin: 0 auto 8px; overflow: hidden; }
-        .progress-fill { height: 100%; width: 0%; background: var(--header-green); transition: width 0.4s; }
-
-        .nav-fab { position: fixed; bottom: 30px; width: 65px; height: 65px; background: var(--header-green); color: white; border-radius: 50%; border: none; font-size: 35px; box-shadow: 0 6px 20px rgba(0,0,0,0.2); z-index: 9999; cursor: pointer; display: none; align-items: center; justify-content: center; }
-        #prev-week { left: 30px; }
-        #next-week { right: 30px; }
-        #fab { left: 50%; transform: translateX(-50%); background: #82c91e; }
+        /* NAV BUTTONS WITH SAFE AREA PROTECTION */
+        .nav-fab { 
+            position: fixed; 
+            bottom: calc(30px + env(safe-area-inset-bottom)); 
+            width: 65px; height: 65px; 
+            background: var(--header-green); color: white; border-radius: 50%; border: none; 
+            font-size: 35px; box-shadow: 0 6px 20px rgba(0,0,0,0.2); 
+            z-index: 9999; cursor: pointer; display: none; align-items: center; justify-content: center; 
+        }
+        #prev-week { left: calc(30px + env(safe-area-inset-left)); }
+        #next-week { right: calc(30px + env(safe-area-inset-right)); }
+        #fab { right: calc(30px + env(safe-area-inset-right)); background: #82c91e; }
 
         #overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.98); z-index: 10000; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
         .overlay-card { background: white; padding: 30px; border-radius: 25px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); width: 100%; max-width: 500px; }
@@ -74,7 +92,6 @@
     <div class="view-content">
         <div id="pane-list" class="view-pane"><iframe id="iframe-list"></iframe></div>
         <div id="pane-week" class="view-pane active"><iframe id="iframe-week"></iframe></div>
-        
         <div id="pane-chores" class="view-pane">
             <div style="display:flex; justify-content:center; gap:10px; padding:15px;">
                 <button onclick="setCP('kids')" id="p-kids" class="m-btn active">Kids</button>
@@ -82,7 +99,6 @@
             </div>
             <div id="chores-grid" class="chores-grid"></div>
         </div>
-
         <div id="pane-term" class="view-pane">
             <div style="padding: 30px; overflow-y: auto;">
                 <h2 style="color:var(--header-green); margin-top:0;">📅 School Term Tasks</h2>
@@ -119,8 +135,7 @@
 
     async function cloudSave() {
         try {
-            const data = { chores: JSON.stringify(chores), term: JSON.stringify(term) };
-            await fetch(DB_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(data) });
+            await fetch(DB_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ chores: JSON.stringify(chores), term: JSON.stringify(term) }) });
         } catch(e) {}
     }
 
@@ -148,8 +163,7 @@
                 <div class="chore-list" id="l-${m}"></div>`;
             grid.appendChild(col);
             list.forEach(c => {
-                const item = document.createElement('div');
-                item.className = `chore-item ${c.done?'done':''}`;
+                const item = document.createElement('div'); item.className = `chore-item ${c.done?'done':''}`;
                 item.style.borderLeft = `8px solid ${mColors[m]}`;
                 item.innerHTML = `<span onclick="toggleItem('${c.id}')" style="flex:1;">${c.text}</span><span onclick="deleteItem('${c.id}')" style="color:#ccc">✕</span>`;
                 document.getElementById('l-'+m).appendChild(item);
@@ -159,11 +173,22 @@
         const tList = document.getElementById('term-list'); if(!tList) return;
         tList.innerHTML = '';
         term.forEach((t, i) => {
-            const item = document.createElement('div');
-            item.className = 'chore-item'; item.style.borderLeft = '8px solid var(--header-green)';
+            const item = document.createElement('div'); item.className = 'chore-item'; item.style.borderLeft = '8px solid var(--header-green)';
             item.innerHTML = `<span>${t}</span><span onclick="deleteTerm(${i})" style="color:#ccc">✕</span>`;
             tList.appendChild(item);
         });
+    }
+
+    async function fetchWeather() {
+        try {
+            const r = await fetch('https://api.open-meteo.com/v1/forecast?latitude=-37.76&longitude=144.90&current=temperature_2m,weather_code&daily=temperature_2m_max,temperature_2m_min&timezone=Australia/Melbourne');
+            const d = await r.json();
+            const codes = { 0: '☀️', 1: '🌤️', 2: '⛅', 3: '☁️', 61: '🌧️', 80: '🌦️' };
+            const curr = Math.round(d.current.temperature_2m);
+            const high = Math.round(d.daily.temperature_2m_max[0]);
+            const low = Math.round(d.daily.temperature_2m_min[0]);
+            document.getElementById('weather-display').innerHTML = `${codes[d.current.weather_code] || '☀️'} ${curr}° (L:${low}° H:${high}°) ABERFELDIE`;
+        } catch(e) {}
     }
 
     function switchView(v) {
@@ -175,6 +200,22 @@
         document.getElementById('prev-week').style.display = isCal ? 'flex' : 'none';
         document.getElementById('next-week').style.display = isCal ? 'flex' : 'none';
         document.getElementById('fab').style.display = (v === 'chores' || v === 'term') ? 'flex' : 'none';
+    }
+
+    function addItem() { const val = document.getElementById('new-input').value; if(!val) return; if(currentTab === 'chores') chores.push({id: 'u-'+Date.now(), text: val, person: curM, done: false}); else term.push(val); document.getElementById('new-input').value = ''; toggleOverlay(false); render(); cloudSave(); }
+    function toggleItem(id) { const c = chores.find(x => x.id === id); c.done = !c.done; render(); cloudSave(); }
+    function deleteItem(id) { chores = chores.filter(x => x.id !== id); render(); cloudSave(); }
+    function deleteTerm(i) { term.splice(i, 1); render(); cloudSave(); }
+    function setCP(p) { cPage = p; render(); document.querySelectorAll('#pane-chores .m-btn').forEach(b => b.classList.toggle('active', b.innerText.includes(p === 'kids' ? 'Kids' : 'Parents'))); }
+    function changeWeek(days) { dateOffset += days; updateCals(); }
+
+    function updateCals() {
+        const d = new Date(); d.setDate(d.getDate() + dateOffset);
+        const ds = d.toISOString().split('T')[0].replace(/-/g, '');
+        const p = `&showTitle=0&showNav=0&showDate=1&showTabs=0&showPrint=0&showCalendars=0&ctz=Australia/Melbourne&dates=${ds}/${ds}`;
+        const src = `&src=joesita@gmail.com&color=%230B8043&src=bethanyrileysita@gmail.com&color=%23E67C73`;
+        document.getElementById('iframe-list').src = `https://calendar.google.com/calendar/u/0/embed?mode=AGENDA${src}${p}`;
+        document.getElementById('iframe-week').src = `https://calendar.google.com/calendar/u/0/embed?mode=WEEK${src}${p}`;
     }
 
     function toggleOverlay(show) {
@@ -191,41 +232,10 @@
         }
     }
 
-    function addItem() {
-        const val = document.getElementById('new-input').value;
-        if(!val) return;
-        if(currentTab === 'chores') chores.push({id: 'u-'+Date.now(), text: val, person: curM, done: false});
-        else term.push(val);
-        document.getElementById('new-input').value = '';
-        toggleOverlay(false); render(); cloudSave();
-    }
-
-    function toggleItem(id) { const c = chores.find(x => x.id === id); c.done = !c.done; render(); cloudSave(); }
-    function deleteItem(id) { chores = chores.filter(x => x.id !== id); render(); cloudSave(); }
-    function deleteTerm(i) { term.splice(i, 1); render(); cloudSave(); }
-    function setCP(p) { cPage = p; render(); document.querySelectorAll('#pane-chores .m-btn').forEach(b => b.classList.remove('active')); event.target.classList.add('active'); }
-    function changeWeek(days) { dateOffset += days; updateCals(); }
-
-    function updateCals() {
-        const d = new Date(); d.setDate(d.getDate() + dateOffset);
-        const ds = d.toISOString().split('T')[0].replace(/-/g, '');
-        const p = `&showTitle=0&showNav=0&showDate=1&showTabs=0&showPrint=0&showCalendars=0&ctz=Australia/Melbourne&dates=${ds}/${ds}`;
-        const src = `&src=joesita@gmail.com&color=%230B8043&src=bethanyrileysita@gmail.com&color=%23E67C73`;
-        document.getElementById('iframe-list').src = `https://calendar.google.com/calendar/u/0/embed?mode=AGENDA${src}${p}`;
-        document.getElementById('iframe-week').src = `https://calendar.google.com/calendar/u/0/embed?mode=WEEK${src}${p}`;
-    }
-
-    async function fetchWeather() {
-        try {
-            const r = await fetch('https://api.open-meteo.com/v1/forecast?latitude=-37.76&longitude=144.90&current=temperature_2m,weather_code&timezone=Australia/Melbourne');
-            const d = await r.json();
-            const codes = { 0: '☀️', 1: '🌤️', 2: '⛅', 3: '☁️', 61: '🌧️', 80: '🌦️' };
-            document.getElementById('weather-display').innerHTML = `${codes[d.current.weather_code] || '☀️'} ${Math.round(d.current.temperature_2m)}° ABERFELDIE`;
-        } catch(e) {}
-    }
-
     setInterval(() => { document.getElementById('time').textContent = new Date().toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit', hour12: true }).toLowerCase(); }, 1000);
-    setInterval(cloudLoad, 30000); updateCals(); fetchWeather(); cloudLoad();
+    setInterval(fetchWeather, 900000); 
+    setInterval(cloudLoad, 30000);
+    updateCals(); fetchWeather(); cloudLoad();
 </script>
 </body>
 </html>
