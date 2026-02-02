@@ -20,60 +20,43 @@
         }
 
         body, html { margin: 0; padding: 0; height: 100%; width: 100%; font-family: 'Segoe UI', sans-serif; background-color: var(--bg-mint); color: var(--slate-green); overflow: hidden; }
+        .main-container { display: flex; flex-direction: column; height: 100vh; padding: 10px; box-sizing: border-box; }
         
-        .main-container { 
-            display: flex; flex-direction: column; height: 100vh; 
-            padding: calc(10px + env(safe-area-inset-top)) 10px calc(10px + env(safe-area-inset-bottom)) 10px; 
-            box-sizing: border-box; 
-        }
-        
-        /* UPDATED HEADER WITH REFRESH */
+        /* HEADER */
         .top-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-shrink: 0; }
-        .branding { display: flex; align-items: center; gap: 10px; }
+        .branding { display: flex; align-items: center; gap: 8px; }
         .branding h1 { font-size: 22px; font-weight: 700; margin: 0; color: var(--header-green); }
-        .refresh-btn { 
-            font-size: 20px; color: var(--header-green); cursor: pointer; 
-            background: none; border: none; padding: 5px; line-height: 1;
-            transition: transform 0.3s;
-        }
-        .refresh-btn:active { transform: rotate(180deg); opacity: 0.6; }
+        .refresh-btn { font-size: 20px; color: var(--header-green); background: none; border: none; cursor: pointer; padding: 0; }
 
-        .view-toggle { background: rgba(0,0,0,0.05); border-radius: 50px; padding: 4px; display: flex; border: 1px solid rgba(0,0,0,0.1); }
-        .t-btn { padding: 6px 12px; border-radius: 40px; border: none; background: transparent; color: #a1b0aa; font-weight: 800; cursor: pointer; font-size: 12px; }
+        .view-toggle { background: rgba(0,0,0,0.05); border-radius: 50px; padding: 3px; display: flex; border: 1px solid rgba(0,0,0,0.1); }
+        .t-btn { padding: 6px 12px; border-radius: 40px; border: none; background: transparent; color: #a1b0aa; font-weight: 800; cursor: pointer; font-size: 11px; }
         .t-btn.active { background: white; color: var(--slate-green); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        
-        .time-weather { text-align: right; min-width: 170px; }
-        #time { font-size: 30px; font-weight: 800; line-height: 1; color: var(--header-green); margin-bottom: 2px; }
-        #weather-display { font-size: 11px; font-weight: 800; color: var(--header-green); text-transform: uppercase; }
+        #time { font-size: 28px; font-weight: 800; color: var(--header-green); min-width: 100px; text-align: right; }
 
+        /* CONTENT & CROP */
         .view-content { flex: 1; position: relative; overflow: hidden; border-radius: 15px; background: white; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
-        .view-pane { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; }
+        .view-pane { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; overflow-y: auto; }
         .view-pane.active { display: flex; }
         
-        /* IMPROVED CROP BOX */
         .cal-container { width: 100%; height: 100%; overflow: hidden; position: relative; }
-        iframe { 
-            position: absolute;
-            top: -70px; /* Deeper crop to hide giant day headers */
-            left: 0;
-            width: 100%; 
-            height: calc(100% + 70px); 
-            border: none;
-            filter: sepia(0.1) hue-rotate(100deg) brightness(1.05); 
-        }
+        iframe { position: absolute; top: -80px; width: 100%; height: calc(100% + 80px); border: none; filter: sepia(0.1) hue-rotate(100deg) brightness(1.05); }
 
-        /* (Chores, Weather, and Task styles remain stable) */
-        .chores-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; flex: 1; padding: 12px; }
-        .chore-col { border-radius: 20px; display: flex; flex-direction: column; border: 1px solid #eee; overflow: hidden; background: white; }
-        .col-header { height: 40px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 16px; }
-        .chore-list { flex: 1; padding: 10px; overflow-y: auto; }
-        .chore-item { background: white; padding: 10px; margin-bottom: 5px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(0,0,0,0.05); font-weight: 600; font-size: 13px; }
-        .chore-item.done { opacity: 0.4; text-decoration: line-through; border-left: 5px solid #ddd !important; }
-        
-        .nav-fab { position: fixed; bottom: calc(25px + env(safe-area-inset-bottom)); width: 60px; height: 60px; background: var(--header-green); color: white; border-radius: 50%; border: none; font-size: 30px; box-shadow: 0 6px 20px rgba(0,0,0,0.2); z-index: 9999; cursor: pointer; display: none; align-items: center; justify-content: center; }
-        #prev-week { left: calc(25px + env(safe-area-inset-left)); }
-        #next-week { right: calc(25px + env(safe-area-inset-right)); }
-        #fab { right: calc(25px + env(safe-area-inset-right)); background: #82c91e; }
+        /* CHORES */
+        .chores-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 10px; }
+        .chore-col { border-radius: 12px; border: 1px solid #eee; overflow: hidden; background: white; padding-bottom: 10px; }
+        .col-header { height: 35px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; }
+        .chore-list { padding: 8px; }
+        .chore-item { background: white; padding: 8px; margin-bottom: 5px; border-radius: 8px; display: flex; justify-content: space-between; border: 1px solid rgba(0,0,0,0.05); font-weight: 600; font-size: 11px; }
+        .chore-item.done { opacity: 0.4; text-decoration: line-through; border-left: 4px solid #ddd !important; }
+
+        /* NAV BUTTONS */
+        .nav-fab { position: fixed; width: 55px; height: 55px; background: var(--header-green); color: white; border-radius: 50%; border: none; font-size: 28px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 99999; cursor: pointer; display: none; align-items: center; justify-content: center; }
+        #prev-week { bottom: 25px; left: 25px; }
+        #next-week { bottom: 25px; right: 25px; }
+        #fab { bottom: 25px; right: 25px; background: #82c91e; } /* Positioned right */
+
+        #overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.98); z-index: 100000; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
+        .overlay-card { background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); width: 100%; max-width: 450px; }
     </style>
 </head>
 <body>
@@ -82,7 +65,7 @@
     <div class="top-nav">
         <div class="branding">
             <h1>Sita Hub</h1>
-            <button class="refresh-btn" onclick="location.reload()" title="Refresh Hub">↻</button>
+            <button class="refresh-btn" onclick="location.reload()">↻</button>
         </div>
         <div class="view-toggle">
             <button onclick="switchView('list')" id="btn-list" class="t-btn">List</button>
@@ -90,10 +73,7 @@
             <button onclick="switchView('chores')" id="btn-chores" class="t-btn">Chores</button>
             <button onclick="switchView('term')" id="btn-term" class="t-btn">Term</button>
         </div>
-        <div class="time-weather">
-            <div id="time">00:00</div>
-            <div id="weather-display">--° ABERFELDIE</div>
-        </div>
+        <div id="time">--:--</div>
     </div>
 
     <div class="view-content">
@@ -101,12 +81,15 @@
         <div id="pane-week" class="view-pane active"><div class="cal-container"><iframe id="iframe-week"></iframe></div></div>
         <div id="pane-chores" class="view-pane">
             <div style="display:flex; justify-content:center; gap:8px; padding:10px;">
-                <button onclick="setCP('kids')" id="p-kids" class="m-btn active">Kids</button>
-                <button onclick="setCP('adults')" id="p-adults" class="m-btn">Parents & Snickers</button>
+                <button onclick="setCP('kids')" id="p-kids" class="t-btn active" style="background:#eee; color:#444">Kids</button>
+                <button onclick="setCP('adults')" id="p-adults" class="t-btn" style="background:#eee; color:#444">Parents</button>
             </div>
             <div id="chores-grid" class="chores-grid"></div>
         </div>
-        <div id="pane-term" class="view-pane"><div id="term-list" style="column-count: 2; padding: 20px;"></div></div>
+        <div id="pane-term" class="view-pane">
+            <div style="padding: 10px;"><h2 style="color:var(--header-green); font-size:18px;">📅 Term Tasks</h2></div>
+            <div id="term-list" style="column-count: 2; padding: 10px;"></div>
+        </div>
     </div>
 </div>
 
@@ -114,10 +97,103 @@
 <button id="next-week" class="nav-fab" onclick="changeWeek(7)">→</button>
 <button id="fab" class="nav-fab" onclick="toggleOverlay(true)">+</button>
 
+<div id="overlay">
+    <div class="overlay-card">
+        <h2 id="overlay-title" style="color: var(--header-green);">Add Item</h2>
+        <div id="member-select-overlay" style="margin-bottom:15px; display:flex; flex-wrap:wrap; gap:5px;"></div>
+        <input type="text" id="new-input" style="width:100%; padding:15px; font-size:16px; border-radius:12px; border:2px solid #eee; margin-bottom:15px; box-sizing:border-box;" placeholder="Enter text...">
+        <div style="display:flex; gap:10px;">
+            <button onclick="addItem()" style="flex:2; background:#82c91e; color:white; border:none; padding:15px; border-radius:12px; font-weight:800;">Add</button>
+            <button onclick="toggleOverlay(false)" style="flex:1; background:#ccc; border:none; padding:12px; border-radius:12px; font-weight:800;">Close</button>
+        </div>
+    </div>
+</div>
+
 <script>
     const DB_URL = 'https://script.google.com/macros/s/AKfycbxfcQoQCWnlbfOX8jIJKLAuc8VuWknXYQ5WQSKZhXywoHQRub91tyS6gRPBKqFrn01bWg/exec';
-    // (Include cloudLoad, render, toggleItem, switchView, updateCals functions here)
-    // ...
+    const family = { kids: ['Ellie', 'Joey', 'Madi'], adults: ['Mum', 'Dad', 'Snickers'] };
+    const mColors = { Ellie: '#e5ccff', Joey: '#cce5ff', Madi: '#ffcceb', Mum: '#c9e4d1', Dad: '#d9f2f2', Snickers: '#d7b899' };
+    const hColors = { Ellie: 'var(--ellie-h)', Joey: 'var(--joey-h)', Madi: 'var(--madi-h)', Mum: 'var(--mum-h)', Dad: 'var(--dad-h)', Snickers: 'var(--snickers-h)' };
+    const bgColors = { Ellie: 'var(--ellie-bg)', Joey: 'var(--joey-bg)', Madi: 'var(--madi-bg)', Mum: 'var(--mum-bg)', Dad: 'var(--dad-bg)', Snickers: 'var(--snickers-bg)' };
+    
+    let chores = [], term = [], curM = 'Ellie', cPage = 'kids', currentTab = 'week', dateOffset = 0;
+
+    async function cloudLoad() {
+        try {
+            const r = await fetch(DB_URL);
+            const d = await r.json();
+            chores = JSON.parse(d.chores || '[]');
+            term = JSON.parse(d.term || '[]');
+            render();
+        } catch(e) { console.error("Cloud load failed"); }
+    }
+
+    async function cloudSave() {
+        try {
+            await fetch(DB_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ chores: JSON.stringify(chores), term: JSON.stringify(term) }) });
+        } catch(e) {}
+    }
+
+    function render() {
+        const grid = document.getElementById('chores-grid'); if(!grid) return;
+        grid.innerHTML = '';
+        family[cPage].forEach(m => {
+            const col = document.createElement('div'); col.className = 'chore-col'; col.style.backgroundColor = bgColors[m];
+            col.innerHTML = `<div class="col-header" style="background:${hColors[m]}">${m}</div><div class="chore-list" id="l-${m}"></div>`;
+            grid.appendChild(col);
+            chores.filter(c => c.person === m).forEach(c => {
+                const item = document.createElement('div'); item.className = `chore-item ${c.done?'done':''}`;
+                item.style.borderLeft = `6px solid ${mColors[m]}`;
+                item.innerHTML = `<span onclick="toggleItem('${c.id}')" style="flex:1;">${c.text}</span><span onclick="deleteItem('${c.id}')" style="color:#ccc; padding:0 5px;">✕</span>`;
+                document.getElementById('l-'+m).appendChild(item);
+            });
+        });
+
+        const tList = document.getElementById('term-list'); if(!tList) return;
+        tList.innerHTML = '';
+        term.forEach((t, i) => {
+            const item = document.createElement('div'); item.className = 'chore-item'; item.style.borderLeft = '6px solid var(--header-green)';
+            item.innerHTML = `<span>${t}</span><span onclick="deleteTerm(${i})" style="color:#ccc; padding:0 5px;">✕</span>`;
+            tList.appendChild(item);
+        });
+    }
+
+    function switchView(v) {
+        currentTab = v;
+        document.querySelectorAll('.view-pane, .t-btn').forEach(el => el.classList.remove('active'));
+        document.getElementById('pane-'+v).classList.add('active');
+        document.getElementById('btn-'+v).classList.add('active');
+        const isCal = (v === 'week' || v === 'list');
+        document.getElementById('prev-week').style.display = isCal ? 'flex' : 'none';
+        document.getElementById('next-week').style.display = isCal ? 'flex' : 'none';
+        document.getElementById('fab').style.display = (v === 'chores' || v === 'term') ? 'flex' : 'none';
+    }
+
+    function toggleOverlay(s) {
+        document.getElementById('overlay').style.display = s ? 'flex' : 'none';
+        const sel = document.getElementById('member-select-overlay'); sel.innerHTML = '';
+        if(currentTab === 'chores') {
+            [...family.kids, ...family.adults].forEach(m => {
+                const b = document.createElement('button'); b.className = `m-btn ${curM===m?'active':''}`; b.textContent = m;
+                b.onclick = () => { curM=m; document.querySelectorAll('.m-btn').forEach(x => x.classList.remove('active')); b.classList.add('active'); };
+                sel.appendChild(b);
+            });
+        }
+    }
+
+    function addItem() {
+        const val = document.getElementById('new-input').value; if(!val) return;
+        if(currentTab === 'chores') chores.push({id: 'u-'+Date.now(), text: val, person: curM, done: false});
+        else term.push(val);
+        document.getElementById('new-input').value = ''; toggleOverlay(false); render(); cloudSave();
+    }
+
+    function toggleItem(id) { const c = chores.find(x => x.id === id); c.done = !c.done; render(); cloudSave(); }
+    function deleteItem(id) { chores = chores.filter(x => x.id !== id); render(); cloudSave(); }
+    function deleteTerm(i) { term.splice(i, 1); render(); cloudSave(); }
+    function setCP(p) { cPage = p; render(); document.getElementById('p-kids').classList.toggle('active', p==='kids'); document.getElementById('p-adults').classList.toggle('active', p==='adults'); }
+    function changeWeek(days) { dateOffset += days; updateCals(); }
+
     function updateCals() {
         const d = new Date(); d.setDate(d.getDate() + dateOffset);
         const ds = d.toISOString().split('T')[0].replace(/-/g, '');
