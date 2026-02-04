@@ -1,145 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Sita Family Hub</title>
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <link rel="manifest" href="manifest.json">
+    <style>
+        :root {
+            --bg-mint: #f0f7f4; --slate-green: #4a5d54; --header-green: #7ebfa4; 
+            --madi-h: #ffcceb; --ellie-h: #e5ccff; --joey-h: #cce5ff;
+            --mum-h: #c9e4d1;  --dad-h: #d9f2f2;   --snickers-h: #d7b899; 
+            --madi-bg: #fff0f9; --ellie-bg: #f7f0ff; --joey-bg: #f0f7ff;
+            --mum-bg: #f2f9f4;  --dad-bg: #f0fdfd;   --snickers-bg: #fcf8f4;
+        }
+        body, html { margin: 0; padding: 0; height: 100%; width: 100%; font-family: 'Segoe UI', sans-serif; background-color: var(--bg-mint); color: var(--slate-green); overflow: hidden; }
+        .main-container { display: flex; flex-direction: column; height: 100vh; padding: 10px; box-sizing: border-box; }
+        
+        .top-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-shrink: 0; }
+        .branding { display: flex; align-items: center; gap: 8px; }
+        .branding h1 { font-size: 22px; font-weight: 700; margin: 0; color: var(--header-green); }
+        .refresh-btn { font-size: 22px; color: var(--header-green); background: none; border: none; cursor: pointer; padding: 0; }
+        
+        .view-toggle { background: rgba(0,0,0,0.05); border-radius: 50px; padding: 3px; display: flex; border: 1px solid rgba(0,0,0,0.1); }
+        .t-btn { padding: 6px 12px; border-radius: 40px; border: none; background: transparent; color: #a1b0aa; font-weight: 800; cursor: pointer; font-size: 11px; }
+        .t-btn.active { background: white; color: var(--slate-green); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        
+        .time-weather { text-align: right; min-width: 170px; }
+        #time { font-size: 28px; font-weight: 800; line-height: 1; color: var(--header-green); margin-bottom: 2px; }
+        #weather-display { font-size: 11px; font-weight: 800; color: var(--header-green); text-transform: uppercase; }
+
+        .view-content { flex: 1; position: relative; overflow: hidden; border-radius: 15px; background: white; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        .view-pane { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; overflow-y: auto; }
+        .view-pane.active { display: flex; }
+        
+        .cal-container { width: 100%; height: 100%; overflow: hidden; position: relative; }
+        iframe { position: absolute; top: -40px; width: 100%; height: calc(100% + 40px); border: none; filter: sepia(0.1) hue-rotate(100deg) brightness(1.05); }
+        
+        .portal-nav { display: flex; gap: 8px; margin-bottom: 15px; padding: 0 10px; }
+        .portal-btn { flex: 1; padding: 12px 5px; border-radius: 12px; border: none; color: white; font-weight: 900; font-size: 14px; cursor: pointer; text-decoration: none; text-align: center; box-shadow: 0 3px 6px rgba(0,0,0,0.1); display: flex; align-items: center; justify-content: center; gap: 6px; text-transform: uppercase; }
+        .btn-ellie { background-color: #b19cd9; }
+        .btn-joey { background-color: #7ebcf0; }
+        .btn-madi { background-color: #ffb6c1; }
+        .btn-news { background-color: var(--header-green); }
+
+        .chores-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 10px; }
+        .chore-col { border-radius: 12px; border: 1px solid #eee; overflow: hidden; background: white; padding-bottom: 10px; }
+        .col-header { height: 35px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; }
+        .chore-list { padding: 8px; }
+        .chore-item { background: white; padding: 8px; margin-bottom: 5px; border-radius: 8px; display: flex; justify-content: space-between; border: 1px solid rgba(0,0,0,0.05); font-weight: 600; font-size: 11px; align-items: center; }
+        .chore-item.done { opacity: 0.4; text-decoration: line-through; border-left: 4px solid #ddd !important; }
+        .del-btn { color: #ccc; padding: 5px 10px; font-size: 14px; cursor: pointer; }
+        .edit-input { width: 90%; padding: 4px; border: 1px solid var(--header-green); border-radius: 4px; font-size: 11px; font-family: inherit; }
+
+        .nav-fab { position: fixed; width: 55px; height: 55px; background: var(--header-green); color: white; border-radius: 50%; border: none; font-size: 28px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 99999; cursor: pointer; display: none; align-items: center; justify-content: center; }
+        #prev-week { bottom: 25px; left: 25px; }
+        #next-week { bottom: 25px; right: 25px; }
+        #fab { bottom: 25px; right: 25px; background: #82c91e; }
+        
+        #overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.98); z-index: 100000; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
+        .overlay-card { background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); width: 100%; max-width: 450px; }
+        .m-btn { padding: 8px 16px; border-radius: 10px; border: 2px solid #eee; background: #f9f9f9; font-weight: 800; cursor: pointer; margin: 3px; font-size: 12px; }
+        .m-btn.active { background: var(--header-green); color: white; border-color: var(--header-green); }
+    </style>
+</head>
+<body>
+<div class="main-container">
+    <div class="top-nav">
+        <div class="branding"><h1>Sita Hub</h1><button class="refresh-btn" onclick="location.reload()">↻</button></div>
+        <div class="view-toggle">
+            <button onclick="switchView('list')" id="btn-list" class="t-btn">List</button>
+            <button onclick="switchView('week')" id="btn-week" class="t-btn active">Week</button>
+            <button onclick="switchView('chores')" id="btn-chores" class="t-btn">Chores</button>
+            <button onclick="switchView('term')" id="btn-term" class="t-btn">Term</button>
+        </div>
+        <div class="time-weather">
+            <div id="time">00:00</div>
+            <div id="weather-display">--° ABERFELDIE</div>
+        </div>
+    </div>
+    <div class="view-content">
+        <div id="pane-list" class="view-pane"><div class="cal-container"><iframe id="iframe-list"></iframe></div></div>
+        <div id="pane-week" class="view-pane active"><div class="cal-container"><iframe id="iframe-week"></iframe></div></div>
+        <div id="pane-chores" class="view-pane">
+            <div style="display:flex; justify-content:center; gap:8px; padding:10px;">
+                <button onclick="setCP('kids')" id="p-kids" class="m-btn active">Kids</button>
+                <button onclick="setCP('adults')" id="p-adults" class="m-btn">Parents</button>
+            </div>
+            <div id="chores-grid" class="chores-grid"></div>
+        </div>
+        <div id="pane-term" class="view-pane">
+            <div style="padding: 10px;">
+                <h2 style="color:var(--header-green); font-size:18px; margin-bottom:12px;">📅 Term & Portals</h2>
+                <div class="portal-nav">
+                    <a href="https://pegspace.pegs.vic.edu.au/timetable/29069" target="_blank" class="portal-btn btn-ellie">🎓 ELLIE</a>
+                    <a href="https://pegspace.pegs.vic.edu.au/timetable/29131" target="_blank" class="portal-btn btn-joey">🎓 JOEY</a>
+                    <a href="https://pegspace.pegs.vic.edu.au/timetable/32533" target="_blank" class="portal-btn btn-madi">🎓 MADI</a>
+                    <a href="https://pegspace.pegs.vic.edu.au/news" target="_blank" class="portal-btn btn-news">📰 NEWS</a>
+                </div>
+            </div>
+            <div id="term-list" style="column-count: 2; padding: 10px;"></div>
+        </div>
+    </div>
+</div>
+<button id="prev-week" class="nav-fab" onclick="changeWeek(-7)">←</button>
+<button id="next-week" class="nav-fab" onclick="changeWeek(7)">→</button>
+<button id="fab" class="nav-fab" onclick="toggleOverlay(true)">+</button>
+<div id="overlay">
+    <div class="overlay-card">
+        <h2 id="overlay-title" style="color: var(--header-green);">Add Item</h2>
+        <div id="member-select-overlay" style="margin-bottom:15px; display:flex; flex-wrap:wrap; gap:5px;"></div>
+        <input type="text" id="new-input" style="width:100%; padding:15px; font-size:16px; border-radius:12px; border:2px solid #eee; margin-bottom:15px; box-sizing:border-box;" placeholder="Enter details...">
+        <div style="display:flex; gap:10px;">
+            <button onclick="addItem()" style="flex:2; background:#82c91e; color:white; border:none; padding:15px; border-radius:12px; font-weight:800;">Add</button>
+            <button id="reset-day-btn" onclick="resetDaily()" style="flex:1; background:#f0ad4e; color:white; border:none; padding:12px; border-radius:12px; font-weight:800; display:none;">Reset Daily Chores</button>
+            <button onclick="toggleOverlay(false)" style="flex:1; background:#ccc; border:none; padding:12px; border-radius:12px; font-weight:800;">Close</button>
+        </div>
+    </div>
+</div>
 <script>
     const DB_URL = 'https://script.google.com/macros/s/AKfycbxfcQoQCWnlbfOX8jIJKLAuc8VuWknXYQ5WQSKZhXywoHQRub91tyS6gRPBKqFrn01bWg/exec';
     const family = { kids: ['Ellie', 'Joey', 'Madi'], adults: ['Mum', 'Dad', 'Snickers'] };
-    const mColors = { Ellie: '#e5ccff', Joey: '#cce5ff', Madi: '#ffcceb', Mum: '#c9e4d1', Dad: '#d9f2f2', Snickers: '#d7b899' };
+    const mColors = { Ellie: '#e5ccff', Joey: '#cce5ff', Madi: '#ffb6c1', Mum: '#c9e4d1', Dad: '#d9f2f2', Snickers: '#d7b899' };
     const hColors = { Ellie: 'var(--ellie-h)', Joey: 'var(--joey-h)', Madi: 'var(--madi-h)', Mum: 'var(--mum-h)', Dad: 'var(--dad-h)', Snickers: 'var(--snickers-h)' };
     const bgColors = { Ellie: 'var(--ellie-bg)', Joey: 'var(--joey-bg)', Madi: 'var(--madi-bg)', Mum: 'var(--mum-bg)', Dad: 'var(--dad-bg)', Snickers: 'var(--snickers-bg)' };
-    
     let chores = [], term = [], curM = 'Ellie', cPage = 'kids', currentTab = 'week', dateOffset = 0;
 
-    // THE RESTORED RESET LOGIC
-    function resetDaily() {
-        if (confirm("Reset all chores to 'not done' for today?")) {
-            chores.forEach(c => c.done = false);
-            render();
-            cloudSave();
-            toggleOverlay(false);
-        }
-    }
-
-    // UPDATED OVERLAY (Ensuring the Reset button is visible and works)
-    function toggleOverlay(s) {
-        const overlay = document.getElementById('overlay');
-        overlay.style.display = s ? 'flex' : 'none';
-        
-        document.getElementById('overlay-title').textContent = (currentTab === 'chores') ? 'Add New Chore' : 'Add Term Event';
-        
-        // Show/Hide Reset button - only makes sense for chores
-        const resetBtn = document.getElementById('reset-action-btn');
-        if (resetBtn) resetBtn.style.display = (currentTab === 'chores') ? 'block' : 'none';
-
-        const sel = document.getElementById('member-select-overlay');
-        sel.innerHTML = '';
-        if(currentTab === 'chores') {
-            [...family.kids, ...family.adults].forEach(m => {
-                const b = document.createElement('button');
-                b.className = `m-btn ${curM===m?'active':''}`;
-                b.textContent = m;
-                b.onclick = () => { 
-                    curM=m; 
-                    document.querySelectorAll('.m-btn').forEach(x => x.classList.remove('active')); 
-                    b.classList.add('active'); 
-                };
-                sel.appendChild(b);
-            });
-        }
-    }
-
-    // UI Structure for the buttons inside the overlay
-    function updateOverlayButtons() {
-        const card = document.querySelector('.overlay-card div[style*="display:flex; gap:10px"]');
-        card.innerHTML = `
-            <button onclick="addItem()" style="flex:2; background:#82c91e; color:white; border:none; padding:15px; border-radius:12px; font-weight:800; font-size:16px;">Add</button>
-            <button id="reset-action-btn" onclick="resetDaily()" style="flex:1; background:#f0ad4e; color:white; border:none; padding:12px; border-radius:12px; font-weight:800; font-size:12px;">Reset Day</button>
-            <button onclick="toggleOverlay(false)" style="flex:1; background:#ccc; border:none; padding:12px; border-radius:12px; font-weight:800;">Close</button>
-        `;
-    }
-
-    // Standard CRUD functions
+    async function cloudLoad() { try { const r = await fetch(DB_URL); const d = await r.json(); chores = JSON.parse(d.chores || '[]'); term = JSON.parse(d.term || '[]'); render(); } catch(e) {} }
     async function cloudSave() { try { await fetch(DB_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ chores: JSON.stringify(chores), term: JSON.stringify(term) }) }); } catch(e) {} }
-    
-    async function cloudLoad() {
-        try {
-            const r = await fetch(DB_URL);
-            const d = await r.json();
-            chores = JSON.parse(d.chores || '[]');
-            term = JSON.parse(d.term || '[]');
-            render();
-        } catch(e) {}
-    }
 
     function render() {
-        const grid = document.getElementById('chores-grid'); if(!grid) return;
-        grid.innerHTML = '';
+        const grid = document.getElementById('chores-grid'); if(!grid) return; grid.innerHTML = '';
         family[cPage].forEach(m => {
-            const list = chores.filter(c => c.person === m);
-            const done = list.filter(c => c.done).length, total = list.length;
-            const perc = total > 0 ? (done/total)*100 : 0;
-            const col = document.createElement('div');
-            col.className = 'chore-col'; col.style.backgroundColor = bgColors[m];
-            col.innerHTML = `<div class="col-header" style="background:${hColors[m]}">${m === 'Snickers' ? '🐾 ' : ''}${m}</div>
-                <div class="progress-container"><div class="progress-fill" style="width:${perc}%"></div></div>
-                <div class="chore-list" id="l-${m}"></div>`;
+            const list = chores.filter(c => c.person === m); 
+            const col = document.createElement('div'); col.className = 'chore-col'; col.style.backgroundColor = bgColors[m];
+            col.innerHTML = `<div class="col-header" style="background:${hColors[m]}">${m==='Snickers'?'🐾 ':''}${m}</div><div class="chore-list" id="l-${m}"></div>`;
             grid.appendChild(col);
             list.forEach(c => {
-                const item = document.createElement('div'); 
-                item.className = `chore-item ${c.done?'done':''}`;
-                item.style.borderLeft = `8px solid ${mColors[m]}`;
-                item.innerHTML = `<span onclick="toggleItem('${c.id}')" style="flex:1;">${c.text}</span><span onclick="deleteItem('${c.id}')" style="color:#ccc">✕</span>`;
+                const item = document.createElement('div'); item.className = `chore-item ${c.done?'done':''}`; item.style.borderLeft = `6px solid ${mColors[m]}`;
+                item.innerHTML = `<span onclick="toggleItem('${c.id}')" style="flex:1;">${c.text}</span><span class="del-btn" onclick="deleteItem('${c.id}')">✕</span>`;
                 document.getElementById('l-'+m).appendChild(item);
             });
         });
-
-        const tList = document.getElementById('term-list'); if(!tList) return;
-        tList.innerHTML = '';
+        const tList = document.getElementById('term-list'); if(!tList) return; tList.innerHTML = '';
         term.forEach((t, i) => {
-            const item = document.createElement('div'); 
-            item.className = 'chore-item'; 
-            item.style.borderLeft = '8px solid var(--header-green)';
-            item.innerHTML = `<span>${t}</span><span onclick="deleteTerm(${i})" style="color:#ccc">✕</span>`;
+            const item = document.createElement('div'); item.className = 'chore-item'; item.style.borderLeft = '6px solid var(--header-green)';
+            item.innerHTML = `<span id="term-text-${i}" onclick="editTerm(${i})" style="flex:1;">${t}</span><span class="del-btn" onclick="deleteTerm(${i})">✕</span>`;
             tList.appendChild(item);
         });
     }
 
-    function addItem() {
-        const val = document.getElementById('new-input').value; 
-        if(!val) return; 
-        if(currentTab === 'chores') chores.push({id: 'u-'+Date.now(), text: val, person: curM, done: false}); 
-        else term.push(val); 
-        document.getElementById('new-input').value = ''; 
-        toggleOverlay(false); render(); cloudSave(); 
+    function editTerm(index) {
+        const span = document.getElementById(`term-text-${index}`);
+        const currentVal = term[index];
+        span.innerHTML = `<input type="text" id="edit-term-input-${index}" class="edit-input" value="${currentVal}">`;
+        const input = document.getElementById(`edit-term-input-${index}`);
+        input.focus();
+        input.onblur = () => { term[index] = input.value; render(); cloudSave(); };
+        input.onkeydown = (e) => { if(e.key === 'Enter') { term[index] = input.value; render(); cloudSave(); } };
     }
 
-    function toggleItem(id) { const c = chores.find(x => x.id === id); c.done = !c.done; render(); cloudSave(); }
-    function deleteItem(id) { if(confirm("Delete chore?")) { chores = chores.filter(x => x.id !== id); render(); cloudSave(); } }
-    function deleteTerm(i) { if(confirm("Delete term item?")) { term.splice(i, 1); render(); cloudSave(); } }
-    function setCP(p) { cPage = p; render(); document.querySelectorAll('#p-kids, #p-adults').forEach(b => b.classList.toggle('active', b.id.includes(p))); }
-    function changeWeek(days) { dateOffset += days; updateCals(); }
-
-    function updateCals() {
-        const d = new Date(); d.setDate(d.getDate() + dateOffset);
-        const ds = d.toISOString().split('T')[0].replace(/-/g, '');
-        const p = `&showTitle=0&showNav=0&showDate=1&showTabs=0&showPrint=0&showCalendars=0&ctz=Australia/Melbourne&dates=${ds}/${ds}`;
-        const src = `&src=joesita@gmail.com&color=%230B8043&src=bethanyrileysita@gmail.com&color=%23E67C73`;
-        document.getElementById('iframe-list').src = `https://calendar.google.com/calendar/u/0/embed?mode=AGENDA${src}${p}`;
-        document.getElementById('iframe-week').src = `https://calendar.google.com/calendar/u/0/embed?mode=WEEK${src}${p}`;
-    }
-
-    function switchView(v) {
-        currentTab = v;
-        document.querySelectorAll('.view-pane, .t-btn').forEach(el => el.classList.remove('active'));
-        document.getElementById('pane-'+v).classList.add('active');
-        document.getElementById('btn-'+v).classList.add('active');
-        const isCal = (v === 'week' || v === 'list');
-        document.getElementById('prev-week').style.display = isCal ? 'flex' : 'none';
-        document.getElementById('next-week').style.display = isCal ? 'flex' : 'none';
-        document.getElementById('fab').style.display = (v === 'chores' || v === 'term') ? 'flex' : 'none';
-    }
-
-    // INITIALIZATION
-    setInterval(() => { document.getElementById('time').textContent = new Date().toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit', hour12: true }).toLowerCase(); }, 1000);
-    
-    // Auto-update weather logic from V74
     async function fetchWeather() {
         try {
             const r = await fetch('https://api.open-meteo.com/v1/forecast?latitude=-37.76&longitude=144.90&current=temperature_2m,weather_code&daily=temperature_2m_max,temperature_2m_min&timezone=Australia/Melbourne');
@@ -148,16 +169,45 @@
             const curr = Math.round(d.current.temperature_2m);
             const high = Math.round(d.daily.temperature_2m_max[0]);
             const low = Math.round(d.daily.temperature_2m_min[0]);
-            document.getElementById('weather-display').innerHTML = `${codes[d.current.weather_code] || '☀️'} ${curr}° (L:${low}° H:${high}°) ABERFELDIE`;
+            document.getElementById('weather-display').innerHTML = `${codes[d.current.weather_code] || '☀️'} ${curr}° (${low}° / ${high}°) ABERFELDIE`;
         } catch(e) {}
     }
-
-    window.onload = () => {
-        updateOverlayButtons();
-        updateCals();
-        fetchWeather();
-        cloudLoad();
-        setInterval(fetchWeather, 900000); 
-        setInterval(cloudLoad, 30000);
-    };
+    function switchView(v) {
+        currentTab = v; document.querySelectorAll('.view-pane, .t-btn').forEach(el => el.classList.remove('active'));
+        document.getElementById('pane-'+v).classList.add('active'); document.getElementById('btn-'+v).classList.add('active');
+        const isCal = (v === 'week' || v === 'list');
+        document.getElementById('prev-week').style.display = isCal ? 'flex' : 'none';
+        document.getElementById('next-week').style.display = isCal ? 'flex' : 'none';
+        document.getElementById('fab').style.display = (v === 'chores' || v === 'term') ? 'flex' : 'none';
+    }
+    function toggleOverlay(s) {
+        document.getElementById('overlay').style.display = s ? 'flex' : 'none';
+        document.getElementById('reset-day-btn').style.display = (currentTab === 'chores') ? 'block' : 'none';
+        const sel = document.getElementById('member-select-overlay'); sel.innerHTML = '';
+        if(currentTab === 'chores') {
+            [...family.kids, ...family.adults].forEach(m => {
+                const b = document.createElement('button'); b.className = `m-btn ${curM===m?'active':''}`; b.textContent = m;
+                b.onclick = () => { curM=m; document.querySelectorAll('.m-btn').forEach(x => x.classList.remove('active')); b.classList.add('active'); };
+                sel.appendChild(b);
+            });
+        }
+    }
+    function addItem() { const val = document.getElementById('new-input').value; if(!val) return; if(currentTab === 'chores') chores.push({id: 'u-'+Date.now(), text: val, person: curM, done: false}); else term.push(val); document.getElementById('new-input').value = ''; toggleOverlay(false); render(); cloudSave(); }
+    function toggleItem(id) { const c = chores.find(x => x.id === id); c.done = !c.done; render(); cloudSave(); }
+    function deleteItem(id) { chores = chores.filter(x => x.id !== id); render(); cloudSave(); }
+    function deleteTerm(i) { term.splice(i, 1); render(); cloudSave(); }
+    function resetDaily() { chores.forEach(c => c.done = false); toggleOverlay(false); render(); cloudSave(); }
+    function setCP(p) { cPage = p; render(); }
+    function changeWeek(days) { dateOffset += days; updateCals(); }
+    function updateCals() {
+        const d = new Date(); d.setDate(d.getDate() + dateOffset); const ds = d.toISOString().split('T')[0].replace(/-/g, '');
+        const p = `&showTitle=0&showNav=0&showDate=1&showTabs=0&showPrint=0&showCalendars=0&ctz=Australia/Melbourne&dates=${ds}/${ds}`;
+        const src = `&src=joesita@gmail.com&color=%23125A12&src=bethanyrileysita@gmail.com&color=%235229A3`;
+        document.getElementById('iframe-list').src = `https://calendar.google.com/calendar/u/0/embed?mode=AGENDA${src}${p}`;
+        document.getElementById('iframe-week').src = `https://calendar.google.com/calendar/u/0/embed?mode=WEEK${src}${p}`;
+    }
+    setInterval(() => { document.getElementById('time').textContent = new Date().toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit', hour12: true }).toLowerCase(); }, 1000);
+    setInterval(fetchWeather, 900000); updateCals(); fetchWeather(); cloudLoad();
 </script>
+</body>
+</html>
