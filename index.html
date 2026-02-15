@@ -18,6 +18,7 @@
         body, html { margin: 0; padding: 0; height: 100%; width: 100%; font-family: 'Segoe UI', sans-serif; background-color: var(--bg-mint); color: var(--slate-green); overflow: hidden; }
         .main-container { display: flex; flex-direction: column; height: 100vh; padding: 10px; box-sizing: border-box; }
         
+        /* HEADER */
         .top-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-shrink: 0; }
         .branding { display: flex; align-items: center; gap: 8px; }
         .branding h1 { font-size: 22px; font-weight: 700; margin: 0; color: var(--header-green); }
@@ -38,31 +39,33 @@
         .cal-container { width: 100%; height: 100%; overflow: hidden; position: relative; }
         iframe { position: absolute; top: -40px; width: 100%; height: calc(100% + 40px); border: none; filter: sepia(0.1) hue-rotate(100deg) brightness(1.05); }
         
+        /* PORTAL BUTTONS */
         .portal-nav { display: flex; gap: 8px; margin-bottom: 15px; padding: 0 10px; }
         .portal-btn { flex: 1; padding: 12px 5px; border-radius: 12px; border: none; color: white; font-weight: 900; font-size: 14px; cursor: pointer; text-decoration: none; text-align: center; box-shadow: 0 3px 6px rgba(0,0,0,0.1); display: flex; align-items: center; justify-content: center; gap: 6px; text-transform: uppercase; }
-        .btn-ellie { background-color: #b19cd9; }
-        .btn-joey { background-color: #7ebcf0; }
-        .btn-madi { background-color: #ffb6c1; }
-        .btn-news { background-color: var(--header-green); }
+        .btn-ellie { background-color: #b19cd9; } .btn-joey { background-color: #7ebcf0; } .btn-madi { background-color: #ffb6c1; } .btn-news { background-color: var(--header-green); }
 
+        /* CHORE STYLES with Animations */
         .chores-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 10px; }
         .chore-col { border-radius: 12px; border: 1px solid #eee; overflow: hidden; background: white; padding-bottom: 10px; }
         .col-header { height: 35px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; }
         .chore-list { padding: 8px; }
-        .chore-item { background: white; padding: 8px; margin-bottom: 5px; border-radius: 8px; display: flex; justify-content: space-between; border: 1px solid rgba(0,0,0,0.05); font-weight: 600; font-size: 11px; align-items: center; }
+        .chore-item { background: white; padding: 8px; margin-bottom: 5px; border-radius: 8px; display: flex; justify-content: space-between; border: 1px solid rgba(0,0,0,0.05); font-weight: 600; font-size: 11px; align-items: center; transition: all 0.3s ease; cursor: pointer; }
         .chore-item.done { opacity: 0.4; text-decoration: line-through; border-left: 4px solid #ddd !important; }
         .del-btn { color: #ccc; padding: 5px 10px; font-size: 14px; cursor: pointer; }
         .edit-input { width: 90%; padding: 4px; border: 1px solid var(--header-green); border-radius: 4px; font-size: 11px; font-family: inherit; }
+        .type-badge { font-size: 8px; background: rgba(0,0,0,0.05); padding: 2px 4px; border-radius: 4px; margin-left: 5px; color: #888; }
 
         .nav-fab { position: fixed; width: 55px; height: 55px; background: var(--header-green); color: white; border-radius: 50%; border: none; font-size: 28px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 99999; cursor: pointer; display: none; align-items: center; justify-content: center; }
         #prev-week { bottom: 25px; left: 25px; }
         #next-week { bottom: 25px; right: 25px; }
+        #today-btn { bottom: 25px; left: 50%; transform: translateX(-50%); width: auto; padding: 0 20px; font-size: 12px; font-weight: 800; background: white; color: var(--header-green); border: 2px solid var(--header-green); }
         #fab { bottom: 25px; right: 25px; background: #82c91e; }
         
         #overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.98); z-index: 100000; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
         .overlay-card { background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); width: 100%; max-width: 450px; }
         .m-btn { padding: 8px 16px; border-radius: 10px; border: 2px solid #eee; background: #f9f9f9; font-weight: 800; cursor: pointer; margin: 3px; font-size: 12px; }
         .m-btn.active { background: var(--header-green); color: white; border-color: var(--header-green); }
+        .type-toggle { display: flex; gap: 5px; margin-bottom: 15px; }
     </style>
 </head>
 <body>
@@ -75,10 +78,7 @@
             <button onclick="switchView('chores')" id="btn-chores" class="t-btn">Chores</button>
             <button onclick="switchView('term')" id="btn-term" class="t-btn">Term</button>
         </div>
-        <div class="time-weather">
-            <div id="time">00:00</div>
-            <div id="weather-display">--° ABERFELDIE</div>
-        </div>
+        <div class="time-weather"><div id="time">00:00</div><div id="weather-display">--° ABERFELDIE</div></div>
     </div>
     <div class="view-content">
         <div id="pane-list" class="view-pane"><div class="cal-container"><iframe id="iframe-list"></iframe></div></div>
@@ -105,16 +105,21 @@
     </div>
 </div>
 <button id="prev-week" class="nav-fab" onclick="changeWeek(-7)">←</button>
+<button id="today-btn" class="nav-fab" onclick="resetToToday()">TODAY</button>
 <button id="next-week" class="nav-fab" onclick="changeWeek(7)">→</button>
 <button id="fab" class="nav-fab" onclick="toggleOverlay(true)">+</button>
 <div id="overlay">
     <div class="overlay-card">
         <h2 id="overlay-title" style="color: var(--header-green);">Add Item</h2>
         <div id="member-select-overlay" style="margin-bottom:15px; display:flex; flex-wrap:wrap; gap:5px;"></div>
+        <div id="chore-type-select" class="type-toggle" style="display:none;">
+            <button onclick="setAddType('daily')" id="type-daily" class="m-btn active">Daily (Resets)</button>
+            <button onclick="setAddType('once')" id="type-once" class="m-btn">One-time</button>
+        </div>
         <input type="text" id="new-input" style="width:100%; padding:15px; font-size:16px; border-radius:12px; border:2px solid #eee; margin-bottom:15px; box-sizing:border-box;" placeholder="Enter details...">
         <div style="display:flex; gap:10px;">
             <button onclick="addItem()" style="flex:2; background:#82c91e; color:white; border:none; padding:15px; border-radius:12px; font-weight:800;">Add</button>
-            <button id="reset-day-btn" onclick="resetDaily()" style="flex:1; background:#f0ad4e; color:white; border:none; padding:12px; border-radius:12px; font-weight:800; display:none;">Reset Daily Chores</button>
+            <button id="reset-day-btn" onclick="resetDaily()" style="flex:1; background:#f0ad4e; color:white; border:none; padding:12px; border-radius:12px; font-weight:800; display:none;">Reset Board</button>
             <button onclick="toggleOverlay(false)" style="flex:1; background:#ccc; border:none; padding:12px; border-radius:12px; font-weight:800;">Close</button>
         </div>
     </div>
@@ -125,10 +130,10 @@
     const mColors = { Ellie: '#e5ccff', Joey: '#cce5ff', Madi: '#ffb6c1', Mum: '#c9e4d1', Dad: '#d9f2f2', Snickers: '#d7b899' };
     const hColors = { Ellie: 'var(--ellie-h)', Joey: 'var(--joey-h)', Madi: 'var(--madi-h)', Mum: 'var(--mum-h)', Dad: 'var(--dad-h)', Snickers: 'var(--snickers-h)' };
     const bgColors = { Ellie: 'var(--ellie-bg)', Joey: 'var(--joey-bg)', Madi: 'var(--madi-bg)', Mum: 'var(--mum-bg)', Dad: 'var(--dad-bg)', Snickers: 'var(--snickers-bg)' };
-    let chores = [], term = [], curM = 'Ellie', cPage = 'kids', currentTab = 'week', dateOffset = 0;
+    let chores = [], term = [], curM = 'Ellie', cPage = 'kids', currentTab = 'week', dateOffset = parseInt(localStorage.getItem('sita_cal_offset')) || 0, addType = 'daily';
 
-    async function cloudLoad() { try { const r = await fetch(DB_URL); const d = await r.json(); chores = JSON.parse(d.chores || '[]'); term = JSON.parse(d.term || '[]'); render(); } catch(e) {} }
-    async function cloudSave() { try { await fetch(DB_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ chores: JSON.stringify(chores), term: JSON.stringify(term) }) }); } catch(e) {} }
+    async function cloudLoad() { try { const r = await fetch(DB_URL); const d = await r.json(); chores = JSON.parse(d.chores || '[]'); term = JSON.parse(d.term || '[]'); localStorage.setItem('sita_chores_fb', d.chores); localStorage.setItem('sita_term_fb', d.term); render(); } catch(e) { chores = JSON.parse(localStorage.getItem('sita_chores_fb') || '[]'); term = JSON.parse(localStorage.getItem('sita_term_fb') || '[]'); render(); } }
+    async function cloudSave() { try { await fetch(DB_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ chores: JSON.stringify(chores), term: JSON.stringify(term) }) }); } catch(e) { console.error(e); } }
 
     function render() {
         const grid = document.getElementById('chores-grid'); if(!grid) return; grid.innerHTML = '';
@@ -139,7 +144,7 @@
             grid.appendChild(col);
             list.forEach(c => {
                 const item = document.createElement('div'); item.className = `chore-item ${c.done?'done':''}`; item.style.borderLeft = `6px solid ${mColors[m]}`;
-                item.innerHTML = `<span onclick="toggleItem('${c.id}')" style="flex:1;">${c.text}</span><span class="del-btn" onclick="deleteItem('${c.id}')">✕</span>`;
+                item.innerHTML = `<span onclick="toggleItem('${c.id}')" style="flex:1;">${c.text}${c.type==='daily'?' <span class="type-badge">D</span>':''}</span><span class="del-btn" onclick="deleteItem('${c.id}')">✕</span>`;
                 document.getElementById('l-'+m).appendChild(item);
             });
         });
@@ -152,11 +157,9 @@
     }
 
     function editTerm(index) {
-        const span = document.getElementById(`term-text-${index}`);
-        const currentVal = term[index];
+        const span = document.getElementById(`term-text-${index}`); const currentVal = term[index];
         span.innerHTML = `<input type="text" id="edit-term-input-${index}" class="edit-input" value="${currentVal}">`;
-        const input = document.getElementById(`edit-term-input-${index}`);
-        input.focus();
+        const input = document.getElementById(`edit-term-input-${index}`); input.focus();
         input.onblur = () => { term[index] = input.value; render(); cloudSave(); };
         input.onkeydown = (e) => { if(e.key === 'Enter') { term[index] = input.value; render(); cloudSave(); } };
     }
@@ -166,43 +169,50 @@
             const r = await fetch('https://api.open-meteo.com/v1/forecast?latitude=-37.76&longitude=144.90&current=temperature_2m,weather_code&daily=temperature_2m_max,temperature_2m_min&timezone=Australia/Melbourne');
             const d = await r.json();
             const codes = { 0: '☀️', 1: '🌤️', 2: '⛅', 3: '☁️', 61: '🌧️', 80: '🌦️' };
-            const curr = Math.round(d.current.temperature_2m);
-            const high = Math.round(d.daily.temperature_2m_max[0]);
-            const low = Math.round(d.daily.temperature_2m_min[0]);
-            document.getElementById('weather-display').innerHTML = `${codes[d.current.weather_code] || '☀️'} ${curr}° (${low}° / ${high}°) ABERFELDIE`;
+            document.getElementById('weather-display').innerHTML = `${codes[d.current.weather_code] || '☀️'} ${Math.round(d.current.temperature_2m)}° (${Math.round(d.daily.temperature_2m_min[0])}° / ${Math.round(d.daily.temperature_2m_max[0])}°) ABERFELDIE`;
         } catch(e) {}
     }
+
     function switchView(v) {
         currentTab = v; document.querySelectorAll('.view-pane, .t-btn').forEach(el => el.classList.remove('active'));
         document.getElementById('pane-'+v).classList.add('active'); document.getElementById('btn-'+v).classList.add('active');
         const isCal = (v === 'week' || v === 'list');
         document.getElementById('prev-week').style.display = isCal ? 'flex' : 'none';
         document.getElementById('next-week').style.display = isCal ? 'flex' : 'none';
+        document.getElementById('today-btn').style.display = isCal ? 'flex' : 'none';
         document.getElementById('fab').style.display = (v === 'chores' || v === 'term') ? 'flex' : 'none';
     }
+
     function toggleOverlay(s) {
+        const title = document.getElementById('overlay-title'); const input = document.getElementById('new-input');
         document.getElementById('overlay').style.display = s ? 'flex' : 'none';
         document.getElementById('reset-day-btn').style.display = (currentTab === 'chores') ? 'block' : 'none';
+        document.getElementById('chore-type-select').style.display = (currentTab === 'chores') ? 'flex' : 'none';
         const sel = document.getElementById('member-select-overlay'); sel.innerHTML = '';
         if(currentTab === 'chores') {
+            title.textContent = "Add Chore"; input.placeholder = "Enter task...";
             [...family.kids, ...family.adults].forEach(m => {
                 const b = document.createElement('button'); b.className = `m-btn ${curM===m?'active':''}`; b.textContent = m;
                 b.onclick = () => { curM=m; document.querySelectorAll('.m-btn').forEach(x => x.classList.remove('active')); b.classList.add('active'); };
                 sel.appendChild(b);
             });
-        }
+        } else { title.textContent = "Add Term Date / Event"; input.placeholder = "e.g. Swimming (9am)"; }
     }
-    function addItem() { const val = document.getElementById('new-input').value; if(!val) return; if(currentTab === 'chores') chores.push({id: 'u-'+Date.now(), text: val, person: curM, done: false}); else term.push(val); document.getElementById('new-input').value = ''; toggleOverlay(false); render(); cloudSave(); }
-    function toggleItem(id) { const c = chores.find(x => x.id === id); c.done = !c.done; render(); cloudSave(); }
+
+    function addItem() { const val = document.getElementById('new-input').value; if(!val) return; if(currentTab === 'chores') chores.push({id: 'u-'+Date.now(), text: val, person: curM, done: false, type: addType}); else term.push(val); document.getElementById('new-input').value = ''; toggleOverlay(false); render(); cloudSave(); }
+    function setAddType(t) { addType = t; document.getElementById('type-daily').classList.toggle('active', t==='daily'); document.getElementById('type-once').classList.toggle('active', t==='once'); }
+    function toggleItem(id) { const c = chores.find(x => x.id === id); if(!c) return; c.done = !c.done; render(); cloudSave(); }
     function deleteItem(id) { chores = chores.filter(x => x.id !== id); render(); cloudSave(); }
     function deleteTerm(i) { term.splice(i, 1); render(); cloudSave(); }
-    function resetDaily() { chores.forEach(c => c.done = false); toggleOverlay(false); render(); cloudSave(); }
-    function setCP(p) { cPage = p; render(); }
-    function changeWeek(days) { dateOffset += days; updateCals(); }
+    function resetDaily() { chores = chores.filter(c => c.type === 'daily'); chores.forEach(c => c.done = false); toggleOverlay(false); render(); cloudSave(); }
+    function setCP(p) { cPage = p; render(); document.getElementById('p-kids').classList.toggle('active', p==='kids'); document.getElementById('p-adults').classList.toggle('active', p==='adults'); }
+    function changeWeek(days) { dateOffset += days; localStorage.setItem('sita_cal_offset', dateOffset); updateCals(); }
+    function resetToToday() { dateOffset = 0; localStorage.setItem('sita_cal_offset', 0); updateCals(); }
+
     function updateCals() {
         const d = new Date(); d.setDate(d.getDate() + dateOffset); const ds = d.toISOString().split('T')[0].replace(/-/g, '');
         const p = `&showTitle=0&showNav=0&showDate=1&showTabs=0&showPrint=0&showCalendars=0&ctz=Australia/Melbourne&dates=${ds}/${ds}`;
-        const src = `&src=joesita@gmail.com&color=%23125A12&src=bethanyrileysita@gmail.com&color=%235229A3`;
+        const src = `&src=joesita%40gmail.com&color=%23125A12&src=bethanyrileysita%40gmail.com&color=%235229A3`;
         document.getElementById('iframe-list').src = `https://calendar.google.com/calendar/u/0/embed?mode=AGENDA${src}${p}`;
         document.getElementById('iframe-week').src = `https://calendar.google.com/calendar/u/0/embed?mode=WEEK${src}${p}`;
     }
