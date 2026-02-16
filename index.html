@@ -112,7 +112,7 @@
             let rawChores = d.chores ? JSON.parse(d.chores) : [];
             term = d.term ? JSON.parse(d.term) : [];
 
-            // DEDUPLICATE & CLEAN
+            // NUCLEAR CLEANUP
             const cleanChores = [];
             const seen = new Set();
             rawChores.forEach(c => {
@@ -129,7 +129,7 @@
                 });
             });
 
-            await cloudSave(); // SYNC CLEANED LIST TO CLOUD
+            await cloudSave(); // SAVE CLEAN LIST BACK TO CLOUD
             render(); document.getElementById('weather-display').innerText = 'SYNCED'; fetchWeather();
         } catch(e) { document.getElementById('weather-display').innerText = 'OFFLINE'; }
     }
@@ -168,7 +168,7 @@
     function switchView(v) { currentTab = v; document.querySelectorAll('.view-pane, .t-btn').forEach(el => el.classList.remove('active')); document.getElementById('pane-'+v).classList.add('active'); document.getElementById('btn-'+v).classList.add('active'); const isCal = (v === 'week' || v === 'list'); document.getElementById('prev-week').style.display = isCal ? 'flex' : 'none'; document.getElementById('next-week').style.display = isCal ? 'flex' : 'none'; document.getElementById('today-btn').style.display = isCal ? 'flex' : 'none'; document.getElementById('fab').style.display = (v === 'chores' || v === 'term') ? 'flex' : 'none'; }
     function toggleOverlay(s) { document.getElementById('overlay').style.display = s ? 'flex' : 'none'; document.getElementById('reset-day-btn').style.display = (currentTab === 'chores') ? 'block' : 'none'; document.getElementById('chore-type-select').style.display = (currentTab === 'chores') ? 'flex' : 'none'; const sel = document.getElementById('member-select-overlay'); sel.innerHTML = ''; if(currentTab === 'chores') { [...family.kids, ...family.adults].forEach(m => { const b = document.createElement('button'); b.className = `m-btn ${curM===m?'active':''}`; b.textContent = m; b.onclick = () => { curM=m; document.querySelectorAll('.m-btn').forEach(x => x.classList.remove('active')); b.classList.add('active'); }; sel.appendChild(b); }); } }
     async function fetchWeather() { try { const r = await fetch('https://api.open-meteo.com/v1/forecast?latitude=-37.76&longitude=144.90&current=temperature_2m,weather_code&daily=temperature_2m_max,temperature_2m_min&timezone=Australia/Melbourne'); const d = await r.json(); const codes = { 0: '☀️', 1: '🌤️', 2: '⛅', 3: '☁️', 61: '🌧️', 80: '🌦️' }; document.getElementById('weather-display').innerHTML = `${codes[d.current.weather_code] || '☀️'} ${Math.round(d.current.temperature_2m)}° ABERFELDIE`; } catch(e) {} }
-    function updateCals() { const d = new Date(); d.setDate(d.getDate() + dateOffset); const ds = d.toISOString().split('T')[0].replace(/-/g, ''); const src = `&src=joesita%40gmail.com&color=%23125A12&src=bethanyrileysita%40gmail.com&color=%23D81B60`; const base = `https://calendar.google.com/calendar/embed?showTitle=0&showNav=0&showPrint=0&showTabs=0&ctz=Australia/Melbourne&dates=${ds}/${ds}${src}`; document.getElementById('iframe-list').src = base + "&mode=AGENDA"; document.getElementById('iframe-week').src = base + "&mode=WEEK"; }
+    function updateCals() { const d = new Date(); d.setDate(d.getDate() + dateOffset); const ds = d.toISOString().split('T')[0].replace(/-/g, ''); const src = `&src=joesita%40gmail.com&color=%23125A12&src=bethanyrileysita%40gmail.com&color=%235229A3`; const base = `https://calendar.google.com/calendar/embed?showTitle=0&showNav=0&showPrint=0&showTabs=0&ctz=Australia/Melbourne&dates=${ds}/${ds}${src}`; document.getElementById('iframe-list').src = base + "&mode=AGENDA"; document.getElementById('iframe-week').src = base + "&mode=WEEK"; }
     function setAddType(t) { addType = t; document.getElementById('type-daily').classList.toggle('active', t==='daily'); document.getElementById('type-once').classList.toggle('active', t==='once'); }
     function changeWeek(days) { dateOffset += days; updateCals(); }
     function resetToToday() { dateOffset = 0; updateCals(); }
