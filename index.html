@@ -4,9 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Sita Family Hub</title>
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <link rel="manifest" href="manifest.json">
     <style>
         :root {
             --bg-mint: #f0f7f4; --slate-green: #4a5d54; --header-green: #7ebfa4; 
@@ -17,109 +14,78 @@
         }
         body, html { margin: 0; padding: 0; height: 100%; width: 100%; font-family: 'Segoe UI', sans-serif; background-color: var(--bg-mint); color: var(--slate-green); overflow: hidden; }
         .main-container { display: flex; flex-direction: column; height: 100vh; padding: 10px; box-sizing: border-box; }
-        
         .top-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-shrink: 0; }
         .branding { display: flex; align-items: center; gap: 8px; }
         .branding h1 { font-size: 22px; font-weight: 700; margin: 0; color: var(--header-green); }
-        .version-tag { font-size: 10px; color: var(--header-green); opacity: 0.7; font-weight: 800; margin-left: -5px; margin-top: 8px;}
+        .version-tag { font-size: 10px; color: var(--header-green); opacity: 0.7; font-weight: 800; margin-top: 8px;}
         .refresh-btn { font-size: 22px; color: var(--header-green); background: none; border: none; cursor: pointer; padding: 0; }
-        
         .view-toggle { background: rgba(0,0,0,0.05); border-radius: 50px; padding: 3px; display: flex; border: 1px solid rgba(0,0,0,0.1); }
         .t-btn { padding: 6px 12px; border-radius: 40px; border: none; background: transparent; color: #a1b0aa; font-weight: 800; cursor: pointer; font-size: 11px; }
         .t-btn.active { background: white; color: var(--slate-green); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        
         .time-weather { text-align: right; min-width: 170px; }
         #time { font-size: 28px; font-weight: 800; line-height: 1; color: var(--header-green); margin-bottom: 2px; }
         #weather-display { font-size: 11px; font-weight: 800; color: var(--header-green); text-transform: uppercase; }
-
-        .view-content { flex: 1; position: relative; overflow: hidden; border-radius: 15px; background: white; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        .view-content { flex: 1; position: relative; border-radius: 15px; background: white; box-shadow: 0 5px 15px rgba(0,0,0,0.05); overflow: hidden; }
         .view-pane { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; overflow-y: auto; }
         .view-pane.active { display: flex; }
-        
-        .cal-container { width: 100%; height: 100%; overflow: hidden; position: relative; }
-        iframe { position: absolute; top: -40px; width: 100%; height: calc(100% + 40px); border: none; filter: sepia(0.1) hue-rotate(100deg) brightness(1.05); }
-        
-        .portal-nav { display: flex; gap: 8px; margin-bottom: 15px; padding: 0 10px; }
-        .portal-btn { flex: 1; padding: 12px 5px; border-radius: 12px; border: none; color: white; font-weight: 900; font-size: 14px; cursor: pointer; text-decoration: none; text-align: center; box-shadow: 0 3px 6px rgba(0,0,0,0.1); display: flex; align-items: center; justify-content: center; gap: 6px; text-transform: uppercase; }
-        .btn-ellie { background-color: #b19cd9; } .btn-joey { background-color: #7ebcf0; } .btn-madi { background-color: #ffb6c1; } .btn-news { background-color: var(--header-green); }
-
+        iframe { width: 100%; height: 100%; border: none; }
         .chores-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 10px; }
-        .chore-col { border-radius: 12px; border: 1px solid #eee; overflow: hidden; background: white; padding-bottom: 10px; }
+        .chore-col { border-radius: 12px; border: 1px solid #eee; background: white; padding-bottom: 10px; }
         .col-header { height: 35px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; }
-        .chore-list { padding: 8px; }
-        .chore-item { background: white; padding: 8px; margin-bottom: 5px; border-radius: 8px; display: flex; justify-content: space-between; border: 1px solid rgba(0,0,0,0.05); font-weight: 600; font-size: 11px; align-items: center; transition: all 0.3s ease; cursor: pointer; }
-        .chore-item.done { opacity: 0.4; text-decoration: line-through; border-left: 4px solid #ddd !important; }
-        .del-btn { color: #ccc; padding: 5px 10px; font-size: 14px; cursor: pointer; }
-        .type-badge { font-size: 8px; background: rgba(0,0,0,0.05); padding: 2px 4px; border-radius: 4px; margin-left: 5px; color: #888; border: 1px solid #ddd; }
-
-        .nav-fab { position: fixed; width: 55px; height: 55px; background: var(--header-green); color: white; border-radius: 50%; border: none; font-size: 28px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 99999; cursor: pointer; display: none; align-items: center; justify-content: center; }
-        #prev-week { bottom: 25px; left: 25px; }
-        #today-btn { bottom: 25px; left: 50%; transform: translateX(-50%); width: auto; padding: 0 20px; font-size: 12px; font-weight: 800; background: white; color: var(--header-green); border: 2px solid var(--header-green); }
-        #next-week { bottom: 25px; right: 25px; }
-        #fab { bottom: 25px; right: 25px; background: #82c91e; }
-        
-        #overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.98); z-index: 100000; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
-        .overlay-card { background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); width: 100%; max-width: 450px; }
-        .m-btn { padding: 8px 16px; border-radius: 10px; border: 2px solid #eee; background: #f9f9f9; font-weight: 800; cursor: pointer; margin: 3px; font-size: 12px; }
-        .m-btn.active { background: var(--header-green); color: white; border-color: var(--header-green); }
+        .chore-item { background: white; padding: 8px; margin: 5px; border-radius: 8px; display: flex; justify-content: space-between; font-size: 11px; align-items: center; border-left: 6px solid #ddd; }
+        .chore-item.done { opacity: 0.4; text-decoration: line-through; }
+        .portal-nav { display: flex; gap: 8px; padding: 10px; }
+        .portal-btn { flex: 1; padding: 12px 5px; border-radius: 12px; color: white; font-weight: 900; font-size: 14px; text-decoration: none; text-align: center; display: flex; align-items: center; justify-content: center; }
+        .btn-ellie { background: #b19cd9; } .btn-joey { background: #7ebcf0; } .btn-madi { background: #ffb6c1; } .btn-news { background: var(--header-green); }
+        .nav-fab { position: fixed; width: 55px; height: 55px; background: var(--header-green); color: white; border-radius: 50%; border: none; font-size: 28px; z-index: 999; }
+        #prev-week { bottom: 25px; left: 25px; } #next-week { bottom: 25px; right: 25px; } #fab { bottom: 25px; right: 25px; background: #82c91e; }
+        #overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.95); z-index: 1000; display: none; flex-direction: column; align-items: center; justify-content: center; }
+        .overlay-card { background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); width: 90%; max-width: 400px; }
     </style>
 </head>
 <body>
 <div class="main-container">
     <div class="top-nav">
-        <div class="branding"><h1>Sita Hub</h1><span class="version-tag">V90.2</span><button class="refresh-btn" onclick="location.reload()">↻</button></div>
+        <div class="branding"><h1>Sita Hub</h1><span class="version-tag">V90.3</span><button class="refresh-btn" onclick="location.reload()">↻</button></div>
         <div class="view-toggle">
             <button onclick="switchView('list')" id="btn-list" class="t-btn active">List</button>
             <button onclick="switchView('week')" id="btn-week" class="t-btn">Week</button>
             <button onclick="switchView('chores')" id="btn-chores" class="t-btn">Chores</button>
             <button onclick="switchView('term')" id="btn-term" class="t-btn">Term</button>
         </div>
-        <div class="time-weather"><div id="time">00:00</div><div id="weather-display">--° ABERFELDIE</div></div>
+        <div class="time-weather"><div id="time">--:--</div><div id="weather-display">LOADING...</div></div>
     </div>
     <div class="view-content">
-        <div id="pane-list" class="view-pane active"><div class="cal-container"><iframe id="iframe-list"></iframe></div></div>
-        <div id="pane-week" class="view-pane"><div class="cal-container"><iframe id="iframe-week"></iframe></div></div>
+        <div id="pane-list" class="view-pane active"><iframe id="iframe-list" src="about:blank"></iframe></div>
+        <div id="pane-week" class="view-pane"><iframe id="iframe-week" src="about:blank"></iframe></div>
         <div id="pane-chores" class="view-pane">
             <div style="display:flex; justify-content:center; gap:8px; padding:10px;">
-                <button onclick="setCP('kids')" id="p-kids" class="m-btn active">Kids</button>
-                <button onclick="setCP('adults')" id="p-adults" class="m-btn">Parents</button>
+                <button onclick="setCP('kids')" id="p-kids" style="padding:10px;" class="t-btn active">Kids</button>
+                <button onclick="setCP('adults')" id="p-adults" style="padding:10px;" class="t-btn">Parents</button>
             </div>
             <div id="chores-grid" class="chores-grid"></div>
         </div>
         <div id="pane-term" class="view-pane">
-            <div style="padding: 10px;">
-                <h2 style="color:var(--header-green); font-size:18px; margin-bottom:12px;">📅 Term & Portals</h2>
-                <div class="portal-nav">
-                    <a href="https://pegspace.pegs.vic.edu.au/timetable/29069" target="_blank" class="portal-btn btn-ellie">🎓 ELLIE</a>
-                    <a href="https://pegspace.pegs.vic.edu.au/timetable/29131" target="_blank" class="portal-btn btn-joey">🎓 JOEY</a>
-                    <a href="https://pegspace.pegs.vic.edu.au/timetable/32533" target="_blank" class="portal-btn btn-madi">🎓 MADI</a>
-                    <a href="https://pegspace.pegs.vic.edu.au/news" target="_blank" class="portal-btn btn-news">📰 NEWS</a>
-                </div>
+            <div class="portal-nav">
+                <a href="https://pegspace.pegs.vic.edu.au/timetable/29069" target="_blank" class="portal-btn btn-ellie">ELLIE</a>
+                <a href="https://pegspace.pegs.vic.edu.au/timetable/29131" target="_blank" class="portal-btn btn-joey">JOEY</a>
+                <a href="https://pegspace.pegs.vic.edu.au/timetable/32533" target="_blank" class="portal-btn btn-madi">MADI</a>
+                <a href="https://pegspace.pegs.vic.edu.au/news" target="_blank" class="portal-btn btn-news">NEWS</a>
             </div>
-            <hr style="border:0; border-top:1px solid #eee; margin:0 10px 10px;">
-            <div id="term-list" style="column-count: 2; padding: 10px;"></div>
+            <div id="term-list" style="padding: 10px;"></div>
         </div>
     </div>
 </div>
+
 <button id="prev-week" class="nav-fab" onclick="changeWeek(-7)">←</button>
-<button id="today-btn" class="nav-fab" onclick="resetToToday()">TODAY</button>
 <button id="next-week" class="nav-fab" onclick="changeWeek(7)">→</button>
 <button id="fab" class="nav-fab" onclick="toggleOverlay(true)">+</button>
 
-<div id="overlay">
+<div id="overlay" onclick="if(event.target==this)toggleOverlay(false)">
     <div class="overlay-card">
-        <h2 id="overlay-title" style="color: var(--header-green);">Add Item</h2>
-        <div id="member-select-overlay" style="margin-bottom:15px; display:flex; flex-wrap:wrap; gap:5px;"></div>
-        <div id="chore-type-select" style="display:none; gap: 5px; margin-bottom: 15px;">
-            <button onclick="setAddType('daily')" id="type-daily" class="m-btn active">Daily (Resets)</button>
-            <button onclick="setAddType('once')" id="type-once" class="m-btn">One-time</button>
-        </div>
-        <input type="text" id="new-input" style="width:100%; padding:15px; font-size:16px; border-radius:12px; border:2px solid #eee; margin-bottom:15px; box-sizing:border-box;" placeholder="Enter details...">
-        <div style="display:flex; gap:10px;">
-            <button onclick="addItem()" style="flex:2; background:#82c91e; color:white; border:none; padding:15px; border-radius:12px; font-weight:800;">Add</button>
-            <button id="reset-day-btn" onclick="resetDaily()" style="flex:1; background:#f0ad4e; color:white; border:none; padding:12px; border-radius:12px; font-weight:800; display:none;">Reset Board</button>
-            <button onclick="toggleOverlay(false)" style="flex:1; background:#ccc; border:none; padding:12px; border-radius:12px; font-weight:800;">Close</button>
-        </div>
+        <h2 id="overlay-title">Add Item</h2>
+        <input type="text" id="new-input" style="width:100%; padding:15px; margin-bottom:15px; border-radius:10px; border:1px solid #ddd;" placeholder="Type here...">
+        <button onclick="addItem()" style="width:100%; background:#82c91e; color:white; padding:15px; border-radius:10px; border:none; font-weight:800;">ADD</button>
     </div>
 </div>
 
@@ -127,65 +93,63 @@
     const DB_URL = 'https://script.google.com/macros/s/AKfycbxfcQoQCWnlbfOX8jIJKLAuc8VuWknXYQ5WQSKZhXywoHQRub91tyS6gRPBKqFrn01bWg/exec';
     const family = { kids: ['Ellie', 'Joey', 'Madi'], adults: ['Mum', 'Dad', 'Snickers'] };
     const mColors = { Ellie: '#e5ccff', Joey: '#cce5ff', Madi: '#ffb6c1', Mum: '#c9e4d1', Dad: '#d9f2f2', Snickers: '#d7b899' };
-    const hColors = { Ellie: 'var(--ellie-h)', Joey: 'var(--joey-h)', Madi: 'var(--madi-h)', Mum: 'var(--mum-h)', Dad: 'var(--dad-h)', Snickers: 'var(--snickers-h)' };
-    const bgColors = { Ellie: 'var(--ellie-bg)', Joey: 'var(--joey-bg)', Madi: 'var(--madi-bg)', Mum: 'var(--mum-bg)', Dad: 'var(--dad-bg)', Snickers: 'var(--snickers-bg)' };
-    let chores = [], term = [], curM = 'Ellie', cPage = 'kids', currentTab = 'list', dateOffset = parseInt(localStorage.getItem('sita_cal_offset')) || 0, addType = 'daily';
+    let chores = [], term = [], cPage = 'kids', currentTab = 'list', dateOffset = 0;
 
-    async function cloudLoad() { try { const r = await fetch(DB_URL); const d = await r.json(); chores = JSON.parse(d.chores || '[]'); term = JSON.parse(d.term || '[]'); render(); } catch(e) { console.error(e); } }
-    async function cloudSave() { try { await fetch(DB_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ chores: JSON.stringify(chores), term: JSON.stringify(term) }) }); } catch(e) { console.error(e); } }
+    async function cloudLoad() {
+        try {
+            const r = await fetch(DB_URL);
+            if (!r.ok) throw new Error('Network error');
+            const d = await r.json();
+            chores = JSON.parse(d.chores || '[]');
+            term = JSON.parse(d.term || '[]');
+            localStorage.setItem('sita_backup', JSON.stringify({chores, term}));
+            render();
+        } catch(e) {
+            const backup = JSON.parse(localStorage.getItem('sita_backup') || '{"chores":[],"term":[]}');
+            chores = backup.chores; term = backup.term;
+            render();
+        }
+    }
 
     function render() {
         const grid = document.getElementById('chores-grid'); if(!grid) return; grid.innerHTML = '';
         family[cPage].forEach(m => {
-            const list = chores.filter(c => c.person === m); 
-            const col = document.createElement('div'); col.className = 'chore-col'; col.style.backgroundColor = bgColors[m];
-            col.innerHTML = `<div class="col-header" style="background:${hColors[m]}">${m==='Snickers'?'🐾 ':''}${m}</div><div class="chore-list" id="l-${m}"></div>`;
+            const col = document.createElement('div'); col.className = 'chore-col'; col.style.background = mColors[m] + '22';
+            col.innerHTML = `<div class="col-header" style="background:${mColors[m]}">${m}</div><div id="l-${m}"></div>`;
             grid.appendChild(col);
-            list.forEach(c => {
-                const item = document.createElement('div'); item.className = `chore-item ${c.done?'done':''}`; 
-                item.style.borderLeft = `6px ${c.type==='once'?'dashed':'solid'} ${mColors[m]}`;
-                item.innerHTML = `<span onclick="toggleItem('${c.id}')" style="flex:1;">${c.text}${c.type==='daily'?' <span class="type-badge">D</span>':''}</span><span class="del-btn" onclick="deleteItem('${c.id}')">✕</span>`;
+            chores.filter(c => c.person === m).forEach(c => {
+                const item = document.createElement('div'); item.className = `chore-item ${c.done?'done':''}`;
+                item.style.borderLeftColor = mColors[m];
+                item.innerHTML = `<span onclick="toggleItem('${c.id}')" style="flex:1">${c.text}</span>`;
                 document.getElementById('l-'+m).appendChild(item);
             });
         });
-        const tList = document.getElementById('term-list'); if(!tList) return; tList.innerHTML = '';
-        term.forEach((t, i) => {
-            const item = document.createElement('div'); item.className = 'chore-item'; item.style.borderLeft = '6px solid var(--header-green)';
-            item.innerHTML = `<span id="term-text-${i}" onclick="editTerm(${i})" style="flex:1;">${t}</span><span class="del-btn" onclick="deleteTerm(${i})">✕</span>`;
-            tList.appendChild(item);
-        });
     }
 
-    function toggleItem(id) { const c = chores.find(x => x.id === id); if(!c) return; c.done = !c.done; render(); cloudSave(); }
-    function deleteItem(id) { chores = chores.filter(x => x.id !== id); render(); cloudSave(); }
+    function updateCals() {
+        const d = new Date(); d.setDate(d.getDate() + dateOffset); 
+        const ds = d.toISOString().split('T')[0].replace(/-/g, '');
+        const src = `&src=joesita%40gmail.com&color=%23125A12&src=bethanyrileysita%40gmail.com&color=%23D81B60`;
+        const base = `https://calendar.google.com/calendar/embed?showTitle=0&showNav=0&showPrint=0&showTabs=0&ctz=Australia/Melbourne&dates=${ds}/${ds}${src}`;
+        document.getElementById('iframe-list').src = base + "&mode=AGENDA";
+        document.getElementById('iframe-week').src = base + "&mode=WEEK";
+    }
+
+    function switchView(v) {
+        currentTab = v; document.querySelectorAll('.view-pane, .t-btn').forEach(el => el.classList.remove('active'));
+        document.getElementById('pane-'+v).classList.add('active'); document.getElementById('btn-'+v).classList.add('active');
+        const isCal = (v === 'week' || v === 'list');
+        document.getElementById('prev-week').style.display = isCal ? 'block' : 'none';
+        document.getElementById('next-week').style.display = isCal ? 'block' : 'none';
+        document.getElementById('fab').style.display = (v === 'chores') ? 'block' : 'none';
+    }
+
+    function toggleOverlay(s) { document.getElementById('overlay').style.display = s ? 'flex' : 'none'; }
+    function changeWeek(days) { dateOffset += days; updateCals(); }
+    function setCP(p) { cPage = p; render(); }
     
-    // FIXED RESET FUNCTION
-    function resetDaily() { 
-        // 1. Remove all 'one-time' tasks for the CURRENT view (kids or adults)
-        // 2. Uncheck all 'daily' tasks for the CURRENT view
-        const membersToReset = family[cPage];
-        chores = chores.filter(c => {
-            if (membersToReset.includes(c.person)) {
-                return c.type === 'daily'; // Keep only daily
-            }
-            return true; // Don't affect the other group (adults/kids)
-        });
-        chores.forEach(c => {
-            if (membersToReset.includes(c.person)) c.done = false;
-        });
-        toggleOverlay(false); render(); cloudSave(); 
-    }
-
-    function addItem() { const val = document.getElementById('new-input').value; if(!val) return; if(currentTab === 'chores') chores.push({id: 'u-'+Date.now(), text: val, person: curM, done: false, type: addType}); else term.push(val); document.getElementById('new-input').value = ''; toggleOverlay(false); render(); cloudSave(); }
-    function switchView(v) { currentTab = v; document.querySelectorAll('.view-pane, .t-btn').forEach(el => el.classList.remove('active')); document.getElementById('pane-'+v).classList.add('active'); document.getElementById('btn-'+v).classList.add('active'); const isCal = (v === 'week' || v === 'list'); document.getElementById('prev-week').style.display = isCal ? 'flex' : 'none'; document.getElementById('next-week').style.display = isCal ? 'flex' : 'none'; document.getElementById('today-btn').style.display = isCal ? 'flex' : 'none'; document.getElementById('fab').style.display = (v === 'chores' || v === 'term') ? 'flex' : 'none'; }
-    function toggleOverlay(s) { const title = document.getElementById('overlay-title'); const input = document.getElementById('new-input'); document.getElementById('overlay').style.display = s ? 'flex' : 'none'; document.getElementById('reset-day-btn').style.display = (currentTab === 'chores') ? 'block' : 'none'; document.getElementById('chore-type-select').style.display = (currentTab === 'chores') ? 'flex' : 'none'; const sel = document.getElementById('member-select-overlay'); sel.innerHTML = ''; if(currentTab === 'chores') { title.textContent = "Add Chore"; input.placeholder = "Enter task..."; [...family.kids, ...family.adults].forEach(m => { const b = document.createElement('button'); b.className = `m-btn ${curM===m?'active':''}`; b.textContent = m; b.onclick = () => { curM=m; document.querySelectorAll('.m-btn').forEach(x => x.classList.remove('active')); b.classList.add('active'); }; sel.appendChild(b); }); } else { title.textContent = "Add Term Date / Event"; input.placeholder = "e.g. Swimming (9am)"; } }
-    function setAddType(t) { addType = t; document.getElementById('type-daily').classList.toggle('active', t==='daily'); document.getElementById('type-once').classList.toggle('active', t==='once'); }
-    function setCP(p) { cPage = p; render(); document.getElementById('p-kids').classList.toggle('active', p==='kids'); document.getElementById('p-adults').classList.toggle('active', p==='adults'); }
-    function changeWeek(days) { dateOffset += days; localStorage.setItem('sita_cal_offset', dateOffset); updateCals(); }
-    function resetToToday() { dateOffset = 0; localStorage.setItem('sita_cal_offset', 0); updateCals(); }
-    function updateCals() { const d = new Date(); d.setDate(d.getDate() + dateOffset); const ds = d.toISOString().split('T')[0].replace(/-/g, ''); const p = `&showTitle=0&showNav=0&showDate=1&showTabs=0&showPrint=0&showCalendars=0&ctz=Australia/Melbourne&dates=${ds}/${ds}`; const src = `&src=joesita%40gmail.com&color=%23125A12&src=bethanyrileysita%40gmail.com&color=%235229A3`; document.getElementById('iframe-list').src = `https://calendar.google.com/calendar/u/0/embed?mode=AGENDA${src}${p}`; document.getElementById('iframe-week').src = `https://calendar.google.com/calendar/u/0/embed?mode=WEEK${src}${p}`; }
-    setInterval(() => { document.getElementById('time').textContent = new Date().toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit', hour12: true }).toLowerCase(); }, 1000);
-    setInterval(fetchWeather, 900000); updateCals(); fetchWeather(); cloudLoad();
+    setInterval(() => { document.getElementById('time').textContent = new Date().toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit' }); }, 1000);
+    updateCals(); cloudLoad();
 </script>
 </body>
 </html>
