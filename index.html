@@ -14,42 +14,30 @@
         }
         body, html { margin: 0; padding: 0; height: 100%; width: 100%; font-family: 'Segoe UI', sans-serif; background-color: var(--bg-mint); color: var(--slate-green); overflow: hidden; }
         .main-container { display: flex; flex-direction: column; height: 100vh; padding: 10px; box-sizing: border-box; }
-        
         .top-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-shrink: 0; }
         .branding { display: flex; align-items: center; gap: 8px; }
         .branding h1 { font-size: 22px; font-weight: 700; margin: 0; color: var(--header-green); }
-        .version-tag { font-size: 10px; color: var(--header-green); opacity: 0.7; font-weight: 800; margin-left: -5px; margin-top: 8px;}
+        .version-tag { font-size: 10px; color: var(--header-green); opacity: 0.7; font-weight: 800; margin-top: 8px;}
         .refresh-btn { font-size: 22px; color: var(--header-green); background: none; border: none; cursor: pointer; padding: 0; }
-        
         .view-toggle { background: rgba(0,0,0,0.05); border-radius: 50px; padding: 3px; display: flex; border: 1px solid rgba(0,0,0,0.1); }
         .t-btn { padding: 6px 12px; border-radius: 40px; border: none; background: transparent; color: #a1b0aa; font-weight: 800; cursor: pointer; font-size: 11px; }
         .t-btn.active { background: white; color: var(--slate-green); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        
         .time-weather { text-align: right; min-width: 170px; }
         #time { font-size: 28px; font-weight: 800; line-height: 1; color: var(--header-green); margin-bottom: 2px; }
         #weather-display { font-size: 11px; font-weight: 800; color: var(--header-green); text-transform: uppercase; }
-
         .view-content { flex: 1; position: relative; border-radius: 15px; background: white; box-shadow: 0 5px 15px rgba(0,0,0,0.05); overflow: hidden; }
         .view-pane { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; overflow-y: auto; }
         .view-pane.active { display: flex; }
         iframe { width: 100%; height: 100%; border: none; }
-        
-        .portal-nav { display: flex; gap: 8px; padding: 10px; }
-        .portal-btn { flex: 1; padding: 12px 5px; border-radius: 12px; color: white; font-weight: 900; font-size: 14px; text-decoration: none; text-align: center; display: flex; align-items: center; justify-content: center; }
-        .btn-ellie { background: #b19cd9; } .btn-joey { background: #7ebcf0; } .btn-madi { background: #ffb6c1; } .btn-news { background: var(--header-green); }
-
         .chores-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 10px; }
         .chore-col { border-radius: 12px; border: 1px solid #eee; background: white; padding-bottom: 10px; }
         .col-header { height: 35px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; }
-        .chore-item { background: white; padding: 8px; margin: 5px; border-radius: 8px; display: flex; justify-content: space-between; font-size: 11px; align-items: center; transition: all 0.3s ease; cursor: pointer; border-left: 6px solid #ddd; }
+        .chore-item { background: white; padding: 8px; margin: 5px; border-radius: 8px; display: flex; justify-content: space-between; font-size: 11px; align-items: center; border-left: 6px solid #ddd; }
         .chore-item.done { opacity: 0.4; text-decoration: line-through; }
-        .edit-input { width: 90%; padding: 4px; border: 1px solid var(--header-green); border-radius: 4px; font-size: 11px; font-family: inherit; }
         .type-badge { font-size: 8px; background: rgba(0,0,0,0.05); padding: 2px 4px; border-radius: 4px; margin-left: 5px; color: #888; border: 1px solid #ddd; }
-
         .nav-fab { position: fixed; width: 55px; height: 55px; background: var(--header-green); color: white; border-radius: 50%; border: none; font-size: 28px; z-index: 999; display:none; }
         #prev-week { bottom: 25px; left: 25px; } #next-week { bottom: 25px; right: 25px; } #fab { bottom: 25px; right: 25px; background: #82c91e; }
         #today-btn { bottom: 25px; left: 50%; transform: translateX(-50%); width: auto; padding: 0 20px; font-size: 12px; font-weight: 800; background: white; color: var(--header-green); border: 2px solid var(--header-green); display:none; }
-        
         #overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.95); z-index: 1000; display: none; flex-direction: column; align-items: center; justify-content: center; }
         .overlay-card { background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); width: 90%; max-width: 400px; }
         .m-btn { padding: 8px 16px; border-radius: 10px; border: 2px solid #eee; background: #f9f9f9; font-weight: 800; cursor: pointer; margin: 3px; font-size: 12px; }
@@ -59,7 +47,7 @@
 <body>
 <div class="main-container">
     <div class="top-nav">
-        <div class="branding"><h1>Sita Hub</h1><span class="version-tag">V90.5</span><button class="refresh-btn" onclick="location.reload()">↻</button></div>
+        <div class="branding"><h1>Sita Hub</h1><span class="version-tag">V90.7</span><button class="refresh-btn" onclick="location.reload()">↻</button></div>
         <div class="view-toggle">
             <button onclick="switchView('list')" id="btn-list" class="t-btn active">List</button>
             <button onclick="switchView('week')" id="btn-week" class="t-btn">Week</button>
@@ -79,12 +67,6 @@
             <div id="chores-grid" class="chores-grid"></div>
         </div>
         <div id="pane-term" class="view-pane">
-            <div class="portal-nav">
-                <a href="https://pegspace.pegs.vic.edu.au/timetable/29069" target="_blank" class="portal-btn btn-ellie">ELLIE</a>
-                <a href="https://pegspace.pegs.vic.edu.au/timetable/29131" target="_blank" class="portal-btn btn-joey">JOEY</a>
-                <a href="https://pegspace.pegs.vic.edu.au/timetable/32533" target="_blank" class="portal-btn btn-madi">MADI</a>
-                <a href="https://pegspace.pegs.vic.edu.au/news" target="_blank" class="portal-btn btn-news">NEWS</a>
-            </div>
             <div id="term-list" style="padding: 10px; column-count: 2;"></div>
         </div>
     </div>
@@ -106,7 +88,7 @@
         <input type="text" id="new-input" style="width:100%; padding:15px; margin-bottom:15px; border-radius:10px; border:1px solid #ddd;" placeholder="Type here...">
         <div style="display:flex; gap:10px;">
             <button onclick="addItem()" style="flex:2; background:#82c91e; color:white; padding:15px; border-radius:12px; border:none; font-weight:800;">ADD</button>
-            <button id="reset-day-btn" onclick="resetDaily()" style="flex:1; background:#f0ad4e; color:white; padding:12px; border-radius:12px; border:none; font-weight:800; display:none;">RESET</button>
+            <button id="reset-day-btn" onclick="resetDaily()" style="flex:1; background:#f0ad4e; color:white; padding:12px; border-radius:12px; border:none; font-weight:800; display:none;">RESET ALL</button>
         </div>
     </div>
 </div>
@@ -115,15 +97,25 @@
     const DB_URL = 'https://script.google.com/macros/s/AKfycbxfcQoQCWnlbfOX8jIJKLAuc8VuWknXYQ5WQSKZhXywoHQRub91tyS6gRPBKqFrn01bWg/exec';
     const family = { kids: ['Ellie', 'Joey', 'Madi'], adults: ['Mum', 'Dad', 'Snickers'] };
     const mColors = { Ellie: '#e5ccff', Joey: '#cce5ff', Madi: '#ffb6c1', Mum: '#c9e4d1', Dad: '#d9f2f2', Snickers: '#d7b899' };
+    const kidRecurring = ["Make Bed & Tidy Room", "Brush Teeth", "Breakfast", "School Bag Ready", "PE/Swim Bag Ready"];
+
     let chores = [], term = [], curM = 'Ellie', cPage = 'kids', currentTab = 'list', dateOffset = 0, addType = 'daily';
 
     async function cloudLoad() {
         try {
             const r = await fetch(DB_URL);
             const d = await r.json();
-            // RE-IMPLEMENTING CORRECT PARSING
             chores = d.chores ? JSON.parse(d.chores) : [];
             term = d.term ? JSON.parse(d.term) : [];
+            
+            // AUTOMATIC PRE-FILL FOR KIDS
+            family.kids.forEach(kid => {
+                kidRecurring.forEach(task => {
+                    const exists = chores.find(c => c.person === kid && c.text === task);
+                    if (!exists) chores.push({id: 'r-' + kid + '-' + Date.now() + Math.random(), text: task, person: kid, done: false, type: 'daily'});
+                });
+            });
+
             render();
             document.getElementById('weather-display').innerText = 'SYNCED';
             fetchWeather();
@@ -144,24 +136,16 @@
             chores.filter(c => c.person === m).forEach(c => {
                 const item = document.createElement('div'); item.className = `chore-item ${c.done?'done':''}`;
                 item.style.borderLeft = `6px ${c.type==='once'?'dashed':'solid'} ${mColors[m]}`;
-                item.innerHTML = `<span onclick="toggleItem('${c.id}')" style="flex:1">${c.text}${c.type==='daily'?' <span class="type-badge">D</span>':''}</span><span onclick="deleteItem('${c.id}')" style="color:#ccc; padding-left:10px;">✕</span>`;
+                item.innerHTML = `<span onclick="toggleItem('${c.id}')" style="flex:1">${c.text}${c.type==='daily'?' <span class="type-badge">Daily</span>':''}</span><span onclick="deleteItem('${c.id}')" style="color:#ccc; padding-left:10px;">✕</span>`;
                 document.getElementById('l-'+m).appendChild(item);
             });
         });
         const tList = document.getElementById('term-list'); if(!tList) return; tList.innerHTML = '';
         term.forEach((t, i) => {
             const item = document.createElement('div'); item.className = 'chore-item';
-            item.innerHTML = `<span id="term-text-${i}" onclick="editTerm(${i})" style="flex:1">${t}</span><span onclick="deleteTerm(${i})" style="color:#ccc;">✕</span>`;
+            item.innerHTML = `<span style="flex:1">${t}</span><span onclick="deleteTerm(${i})" style="color:#ccc;">✕</span>`;
             tList.appendChild(item);
         });
-    }
-
-    function editTerm(index) {
-        const span = document.getElementById(`term-text-${index}`); const currentVal = term[index];
-        span.innerHTML = `<input type="text" id="edit-term-input-${index}" class="edit-input" value="${currentVal}">`;
-        const input = document.getElementById(`edit-term-input-${index}`); input.focus();
-        input.onblur = () => { term[index] = input.value; render(); cloudSave(); };
-        input.onkeydown = (e) => { if(e.key === 'Enter') { term[index] = input.value; render(); cloudSave(); } };
     }
 
     function toggleItem(id) { const c = chores.find(x => x.id === id); if(c) c.done = !c.done; render(); cloudSave(); }
@@ -172,7 +156,7 @@
         const membersToReset = family[cPage];
         chores = chores.filter(c => !membersToReset.includes(c.person) || c.type === 'daily');
         chores.forEach(c => { if (membersToReset.includes(c.person)) c.done = false; });
-        toggleOverlay(false); render(); cloudSave(); 
+        render(); cloudSave(); toggleOverlay(false);
     }
 
     function addItem() {
