@@ -15,7 +15,6 @@
         body, html { margin: 0; padding: 0; height: 100%; width: 100%; font-family: 'Segoe UI', sans-serif; background-color: var(--bg-mint); color: var(--slate-green); overflow: hidden; }
         .main-container { display: flex; flex-direction: column; height: 100vh; padding: 10px; box-sizing: border-box; }
         
-        /* HEADER */
         .top-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-shrink: 0; }
         .branding { display: flex; align-items: center; gap: 8px; }
         .branding h1 { font-size: 22px; font-weight: 700; margin: 0; color: var(--header-green); }
@@ -35,24 +34,15 @@
         .view-pane.active { display: flex; }
         iframe { width: 100%; height: 100%; border: none; }
         
-        /* PORTAL BUTTONS */
         .portal-nav { display: flex; gap: 8px; padding: 10px; flex-shrink: 0; }
         .portal-btn { flex: 1; padding: 12px 5px; border-radius: 12px; color: white; font-weight: 900; font-size: 14px; text-decoration: none; text-align: center; display: flex; align-items: center; justify-content: center; gap: 6px; text-transform: uppercase; box-shadow: 0 3px 6px rgba(0,0,0,0.1); }
         .btn-ellie { background: #b19cd9; } .btn-joey { background: #7ebcf0; } .btn-madi { background: #ffb6c1; } .btn-news { background: var(--header-green); }
 
-        /* LIST ITEMS - LARGER TEXT */
         .chores-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 10px; }
         .chore-col { border-radius: 12px; border: 1px solid #eee; background: white; padding-bottom: 10px; }
         .col-header { height: 40px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 16px; }
-        .chore-item { 
-            background: white; padding: 12px; margin: 8px; border-radius: 10px; 
-            display: flex; justify-content: space-between; align-items: center; 
-            font-size: 15px; font-weight: 600; /* Increased font size */
-            border-left: 6px solid #ddd; box-shadow: 0 2px 5px rgba(0,0,0,0.03);
-            transition: all 0.2s ease;
-        }
+        .chore-item { background: white; padding: 12px; margin: 8px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; font-size: 15px; font-weight: 600; border-left: 6px solid #ddd; box-shadow: 0 2px 5px rgba(0,0,0,0.03); transition: all 0.2s ease; }
         .chore-item.done { opacity: 0.35; text-decoration: line-through; filter: grayscale(1); }
-        .type-badge { font-size: 9px; background: rgba(0,0,0,0.05); padding: 2px 5px; border-radius: 4px; margin-left: 5px; color: #888; border: 1px solid #ddd; }
 
         .nav-fab { position: fixed; width: 55px; height: 55px; background: var(--header-green); color: white; border-radius: 50%; border: none; font-size: 28px; z-index: 999; display:none; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
         #prev-week { bottom: 25px; left: 25px; } #next-week { bottom: 25px; right: 25px; } #fab { bottom: 25px; right: 25px; background: #82c91e; }
@@ -67,7 +57,7 @@
 <body>
 <div class="main-container">
     <div class="top-nav">
-        <div class="branding"><h1>Sita Hub</h1><span class="version-tag">V90.8</span><button class="refresh-btn" onclick="location.reload()">↻</button></div>
+        <div class="branding"><h1>Sita Hub</h1><span class="version-tag">V90.9</span><button class="refresh-btn" onclick="location.reload()">↻</button></div>
         <div class="view-toggle">
             <button onclick="switchView('list')" id="btn-list" class="t-btn active">List</button>
             <button onclick="switchView('week')" id="btn-week" class="t-btn">Week</button>
@@ -131,14 +121,27 @@
         try {
             const r = await fetch(DB_URL);
             const d = await r.json();
-            chores = d.chores ? JSON.parse(d.chores) : [];
+            let rawChores = d.chores ? JSON.parse(d.chores) : [];
             term = d.term ? JSON.parse(d.term) : [];
-            
-            // STRICTLY ENFORCE ONLY THE 5 TASKS FOR ALL 3 KIDS
+
+            // 1. DEDUPLICATION: Ensure only one copy of any task exists per person
+            const cleanChores = [];
+            const seen = new Set();
+            rawChores.forEach(c => {
+                const key = c.person + '|' + c.text.trim();
+                if (!seen.has(key)) {
+                    cleanChores.push(c);
+                    seen.has(key) ? null : seen.add(key);
+                }
+            });
+            chores = cleanChores;
+
+            // 2. ENFORCE THE "UNIVERSAL 5" FOR KIDS
             family.kids.forEach(kid => {
                 kidRecurring.forEach(task => {
-                    if (!chores.find(c => c.person === kid && c.text === task)) {
-                        chores.push({id: 'r-' + kid + '-' + task.substring(0,3) + Date.now(), text: task, person: kid, done: false, type: 'daily'});
+                    const taskExists = chores.find(c => c.person === kid && c.text.trim() === task);
+                    if (!taskExists) {
+                        chores.push({id: 'r-' + kid + '-' + Date.now() + Math.random(), text: task, person: kid, done: false, type: 'daily'});
                     }
                 });
             });
@@ -182,9 +185,7 @@
 
     function resetDaily() { 
         const membersToReset = family[cPage];
-        // Keep chores from other groups, or keep only Daily tasks for current group
         chores = chores.filter(c => !membersToReset.includes(c.person) || c.type === 'daily');
-        // Uncheck all Daily tasks for current group
         chores.forEach(c => { if (membersToReset.includes(c.person)) c.done = false; });
         render(); cloudSave(); toggleOverlay(false);
     }
