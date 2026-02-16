@@ -14,40 +14,32 @@
         }
         body, html { margin: 0; padding: 0; height: 100%; width: 100%; font-family: 'Segoe UI', sans-serif; background-color: var(--bg-mint); color: var(--slate-green); overflow: hidden; }
         .main-container { display: flex; flex-direction: column; height: 100vh; padding: 10px; box-sizing: border-box; }
-        
         .top-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-shrink: 0; }
         .branding { display: flex; align-items: center; gap: 8px; }
         .branding h1 { font-size: 22px; font-weight: 700; margin: 0; color: var(--header-green); }
         .version-tag { font-size: 10px; color: var(--header-green); opacity: 0.7; font-weight: 800; margin-top: 8px;}
         .refresh-btn { font-size: 22px; color: var(--header-green); background: none; border: none; cursor: pointer; padding: 0; }
-        
         .view-toggle { background: rgba(0,0,0,0.05); border-radius: 50px; padding: 3px; display: flex; border: 1px solid rgba(0,0,0,0.1); }
         .t-btn { padding: 6px 12px; border-radius: 40px; border: none; background: transparent; color: #a1b0aa; font-weight: 800; cursor: pointer; font-size: 11px; }
         .t-btn.active { background: white; color: var(--slate-green); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        
         .time-weather { text-align: right; min-width: 170px; }
         #time { font-size: 28px; font-weight: 800; line-height: 1; color: var(--header-green); margin-bottom: 2px; }
         #weather-display { font-size: 11px; font-weight: 800; color: var(--header-green); text-transform: uppercase; }
-
         .view-content { flex: 1; position: relative; border-radius: 15px; background: white; box-shadow: 0 5px 15px rgba(0,0,0,0.05); overflow: hidden; }
         .view-pane { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; overflow-y: auto; }
         .view-pane.active { display: flex; }
         iframe { width: 100%; height: 100%; border: none; }
-        
         .portal-nav { display: flex; gap: 8px; padding: 10px; flex-shrink: 0; }
         .portal-btn { flex: 1; padding: 12px 5px; border-radius: 12px; color: white; font-weight: 900; font-size: 14px; text-decoration: none; text-align: center; display: flex; align-items: center; justify-content: center; gap: 6px; text-transform: uppercase; box-shadow: 0 3px 6px rgba(0,0,0,0.1); }
         .btn-ellie { background: #b19cd9; } .btn-joey { background: #7ebcf0; } .btn-madi { background: #ffb6c1; } .btn-news { background: var(--header-green); }
-
         .chores-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 10px; }
         .chore-col { border-radius: 12px; border: 1px solid #eee; background: white; padding-bottom: 10px; }
         .col-header { height: 40px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 16px; }
         .chore-item { background: white; padding: 12px; margin: 8px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; font-size: 15px; font-weight: 600; border-left: 6px solid #ddd; box-shadow: 0 2px 5px rgba(0,0,0,0.03); transition: all 0.2s ease; }
         .chore-item.done { opacity: 0.35; text-decoration: line-through; filter: grayscale(1); }
-
         .nav-fab { position: fixed; width: 55px; height: 55px; background: var(--header-green); color: white; border-radius: 50%; border: none; font-size: 28px; z-index: 999; display:none; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
         #prev-week { bottom: 25px; left: 25px; } #next-week { bottom: 25px; right: 25px; } #fab { bottom: 25px; right: 25px; background: #82c91e; }
         #today-btn { bottom: 25px; left: 50%; transform: translateX(-50%); width: auto; padding: 0 20px; font-size: 12px; font-weight: 800; background: white; color: var(--header-green); border: 2px solid var(--header-green); display:none; }
-        
         #overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.95); z-index: 1000; display: none; flex-direction: column; align-items: center; justify-content: center; }
         .overlay-card { background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); width: 90%; max-width: 400px; }
         .m-btn { padding: 10px 18px; border-radius: 10px; border: 2px solid #eee; background: #f9f9f9; font-weight: 800; cursor: pointer; margin: 3px; font-size: 13px; }
@@ -57,14 +49,14 @@
 <body>
 <div class="main-container">
     <div class="top-nav">
-        <div class="branding"><h1>Sita Hub</h1><span class="version-tag">V90.9</span><button class="refresh-btn" onclick="location.reload()">↻</button></div>
+        <div class="branding"><h1>Sita Hub</h1><span class="version-tag">V91</span><button class="refresh-btn" onclick="location.reload()">↻</button></div>
         <div class="view-toggle">
             <button onclick="switchView('list')" id="btn-list" class="t-btn active">List</button>
             <button onclick="switchView('week')" id="btn-week" class="t-btn">Week</button>
             <button onclick="switchView('chores')" id="btn-chores" class="t-btn">Chores</button>
             <button onclick="switchView('term')" id="btn-term" class="t-btn">Term</button>
         </div>
-        <div class="time-weather"><div id="time">--:--</div><div id="weather-display">SYNCING...</div></div>
+        <div class="time-weather"><div id="time">--:--</div><div id="weather-display">CLEANING...</div></div>
     </div>
     <div class="view-content">
         <div id="pane-list" class="view-pane active"><iframe id="iframe-list" src="about:blank"></iframe></div>
@@ -87,12 +79,10 @@
         </div>
     </div>
 </div>
-
 <button id="prev-week" class="nav-fab" onclick="changeWeek(-7)">←</button>
 <button id="today-btn" class="nav-fab" onclick="resetToToday()">TODAY</button>
 <button id="next-week" class="nav-fab" onclick="changeWeek(7)">→</button>
 <button id="fab" class="nav-fab" onclick="toggleOverlay(true)">+</button>
-
 <div id="overlay" onclick="if(event.target==this)toggleOverlay(false)">
     <div class="overlay-card">
         <h2 id="overlay-title">Add Item</h2>
@@ -108,13 +98,11 @@
         </div>
     </div>
 </div>
-
 <script>
     const DB_URL = 'https://script.google.com/macros/s/AKfycbxfcQoQCWnlbfOX8jIJKLAuc8VuWknXYQ5WQSKZhXywoHQRub91tyS6gRPBKqFrn01bWg/exec';
     const family = { kids: ['Ellie', 'Joey', 'Madi'], adults: ['Mum', 'Dad', 'Snickers'] };
     const mColors = { Ellie: '#e5ccff', Joey: '#cce5ff', Madi: '#ffb6c1', Mum: '#c9e4d1', Dad: '#d9f2f2', Snickers: '#d7b899' };
     const kidRecurring = ["Make Bed & Tidy Room", "Brush Teeth", "Breakfast", "School Bag Ready", "PE/Swim Bag Ready"];
-
     let chores = [], term = [], curM = 'Ellie', cPage = 'kids', currentTab = 'list', dateOffset = 0, addType = 'daily';
 
     async function cloudLoad() {
@@ -124,31 +112,25 @@
             let rawChores = d.chores ? JSON.parse(d.chores) : [];
             term = d.term ? JSON.parse(d.term) : [];
 
-            // 1. DEDUPLICATION: Ensure only one copy of any task exists per person
+            // DEDUPLICATE & CLEAN
             const cleanChores = [];
             const seen = new Set();
             rawChores.forEach(c => {
-                const key = c.person + '|' + c.text.trim();
-                if (!seen.has(key)) {
-                    cleanChores.push(c);
-                    seen.has(key) ? null : seen.add(key);
-                }
+                const key = (c.person + '|' + c.text.trim().toLowerCase());
+                if (!seen.has(key)) { cleanChores.push(c); seen.add(key); }
             });
             chores = cleanChores;
 
-            // 2. ENFORCE THE "UNIVERSAL 5" FOR KIDS
             family.kids.forEach(kid => {
                 kidRecurring.forEach(task => {
-                    const taskExists = chores.find(c => c.person === kid && c.text.trim() === task);
-                    if (!taskExists) {
+                    if (!chores.find(c => c.person === kid && c.text.trim().toLowerCase() === task.toLowerCase())) {
                         chores.push({id: 'r-' + kid + '-' + Date.now() + Math.random(), text: task, person: kid, done: false, type: 'daily'});
                     }
                 });
             });
 
-            render();
-            document.getElementById('weather-display').innerText = 'SYNCED';
-            fetchWeather();
+            await cloudSave(); // SYNC CLEANED LIST TO CLOUD
+            render(); document.getElementById('weather-display').innerText = 'SYNCED'; fetchWeather();
         } catch(e) { document.getElementById('weather-display').innerText = 'OFFLINE'; }
     }
 
@@ -172,8 +154,7 @@
         });
         const tList = document.getElementById('term-list'); if(!tList) return; tList.innerHTML = '';
         term.forEach((t, i) => {
-            const item = document.createElement('div'); item.className = 'chore-item';
-            item.style.borderLeft = '6px solid var(--header-green)';
+            const item = document.createElement('div'); item.className = 'chore-item'; item.style.borderLeft = '6px solid var(--header-green)';
             item.innerHTML = `<span style="flex:1">${t}</span><span onclick="deleteTerm(${i})" style="color:#ddd; font-size:18px;">✕</span>`;
             tList.appendChild(item);
         });
@@ -182,67 +163,16 @@
     function toggleItem(id) { const c = chores.find(x => x.id === id); if(c) c.done = !c.done; render(); cloudSave(); }
     function deleteItem(id) { chores = chores.filter(x => x.id !== id); render(); cloudSave(); }
     function deleteTerm(i) { term.splice(i, 1); render(); cloudSave(); }
-
-    function resetDaily() { 
-        const membersToReset = family[cPage];
-        chores = chores.filter(c => !membersToReset.includes(c.person) || c.type === 'daily');
-        chores.forEach(c => { if (membersToReset.includes(c.person)) c.done = false; });
-        render(); cloudSave(); toggleOverlay(false);
-    }
-
-    function addItem() {
-        const val = document.getElementById('new-input').value; if(!val) return;
-        if(currentTab === 'chores') chores.push({id: 'u-'+Date.now(), text: val, person: curM, done: false, type: addType});
-        else term.push(val);
-        document.getElementById('new-input').value = ''; toggleOverlay(false); render(); cloudSave();
-    }
-
-    function switchView(v) {
-        currentTab = v; document.querySelectorAll('.view-pane, .t-btn').forEach(el => el.classList.remove('active'));
-        document.getElementById('pane-'+v).classList.add('active'); document.getElementById('btn-'+v).classList.add('active');
-        const isCal = (v === 'week' || v === 'list');
-        document.getElementById('prev-week').style.display = isCal ? 'flex' : 'none';
-        document.getElementById('next-week').style.display = isCal ? 'flex' : 'none';
-        document.getElementById('today-btn').style.display = isCal ? 'flex' : 'none';
-        document.getElementById('fab').style.display = (v === 'chores' || v === 'term') ? 'flex' : 'none';
-    }
-
-    function updateCals() {
-        const d = new Date(); d.setDate(d.getDate() + dateOffset); const ds = d.toISOString().split('T')[0].replace(/-/g, '');
-        const src = `&src=joesita%40gmail.com&color=%23125A12&src=bethanyrileysita%40gmail.com&color=%23D81B60`;
-        const base = `https://calendar.google.com/calendar/embed?showTitle=0&showNav=0&showPrint=0&showTabs=0&ctz=Australia/Melbourne&dates=${ds}/${ds}${src}`;
-        document.getElementById('iframe-list').src = base + "&mode=AGENDA";
-        document.getElementById('iframe-week').src = base + "&mode=WEEK";
-    }
-
-    function toggleOverlay(s) { 
-        document.getElementById('overlay').style.display = s ? 'flex' : 'none'; 
-        document.getElementById('reset-day-btn').style.display = (currentTab === 'chores') ? 'block' : 'none';
-        document.getElementById('chore-type-select').style.display = (currentTab === 'chores') ? 'flex' : 'none';
-        const sel = document.getElementById('member-select-overlay'); sel.innerHTML = '';
-        if(currentTab === 'chores') {
-            [...family.kids, ...family.adults].forEach(m => {
-                const b = document.createElement('button'); b.className = `m-btn ${curM===m?'active':''}`; b.textContent = m;
-                b.onclick = () => { curM=m; document.querySelectorAll('.m-btn').forEach(x => x.classList.remove('active')); b.classList.add('active'); };
-                sel.appendChild(b);
-            });
-        }
-    }
-
-    async function fetchWeather() {
-        try {
-            const r = await fetch('https://api.open-meteo.com/v1/forecast?latitude=-37.76&longitude=144.90&current=temperature_2m,weather_code&daily=temperature_2m_max,temperature_2m_min&timezone=Australia/Melbourne');
-            const d = await r.json();
-            const codes = { 0: '☀️', 1: '🌤️', 2: '⛅', 3: '☁️', 61: '🌧️', 80: '🌦️' };
-            document.getElementById('weather-display').innerHTML = `${codes[d.current.weather_code] || '☀️'} ${Math.round(d.current.temperature_2m)}° ABERFELDIE`;
-        } catch(e) {}
-    }
-
+    function resetDaily() { const members = family[cPage]; chores = chores.filter(c => !members.includes(c.person) || c.type === 'daily'); chores.forEach(c => { if (members.includes(c.person)) c.done = false; }); render(); cloudSave(); toggleOverlay(false); }
+    function addItem() { const val = document.getElementById('new-input').value; if(!val) return; if(currentTab === 'chores') chores.push({id: 'u-'+Date.now(), text: val, person: curM, done: false, type: addType}); else term.push(val); document.getElementById('new-input').value = ''; toggleOverlay(false); render(); cloudSave(); }
+    function switchView(v) { currentTab = v; document.querySelectorAll('.view-pane, .t-btn').forEach(el => el.classList.remove('active')); document.getElementById('pane-'+v).classList.add('active'); document.getElementById('btn-'+v).classList.add('active'); const isCal = (v === 'week' || v === 'list'); document.getElementById('prev-week').style.display = isCal ? 'flex' : 'none'; document.getElementById('next-week').style.display = isCal ? 'flex' : 'none'; document.getElementById('today-btn').style.display = isCal ? 'flex' : 'none'; document.getElementById('fab').style.display = (v === 'chores' || v === 'term') ? 'flex' : 'none'; }
+    function toggleOverlay(s) { document.getElementById('overlay').style.display = s ? 'flex' : 'none'; document.getElementById('reset-day-btn').style.display = (currentTab === 'chores') ? 'block' : 'none'; document.getElementById('chore-type-select').style.display = (currentTab === 'chores') ? 'flex' : 'none'; const sel = document.getElementById('member-select-overlay'); sel.innerHTML = ''; if(currentTab === 'chores') { [...family.kids, ...family.adults].forEach(m => { const b = document.createElement('button'); b.className = `m-btn ${curM===m?'active':''}`; b.textContent = m; b.onclick = () => { curM=m; document.querySelectorAll('.m-btn').forEach(x => x.classList.remove('active')); b.classList.add('active'); }; sel.appendChild(b); }); } }
+    async function fetchWeather() { try { const r = await fetch('https://api.open-meteo.com/v1/forecast?latitude=-37.76&longitude=144.90&current=temperature_2m,weather_code&daily=temperature_2m_max,temperature_2m_min&timezone=Australia/Melbourne'); const d = await r.json(); const codes = { 0: '☀️', 1: '🌤️', 2: '⛅', 3: '☁️', 61: '🌧️', 80: '🌦️' }; document.getElementById('weather-display').innerHTML = `${codes[d.current.weather_code] || '☀️'} ${Math.round(d.current.temperature_2m)}° ABERFELDIE`; } catch(e) {} }
+    function updateCals() { const d = new Date(); d.setDate(d.getDate() + dateOffset); const ds = d.toISOString().split('T')[0].replace(/-/g, ''); const src = `&src=joesita%40gmail.com&color=%23125A12&src=bethanyrileysita%40gmail.com&color=%23D81B60`; const base = `https://calendar.google.com/calendar/embed?showTitle=0&showNav=0&showPrint=0&showTabs=0&ctz=Australia/Melbourne&dates=${ds}/${ds}${src}`; document.getElementById('iframe-list').src = base + "&mode=AGENDA"; document.getElementById('iframe-week').src = base + "&mode=WEEK"; }
     function setAddType(t) { addType = t; document.getElementById('type-daily').classList.toggle('active', t==='daily'); document.getElementById('type-once').classList.toggle('active', t==='once'); }
     function changeWeek(days) { dateOffset += days; updateCals(); }
     function resetToToday() { dateOffset = 0; updateCals(); }
     function setCP(p) { cPage = p; render(); document.getElementById('p-kids').classList.toggle('active', p==='kids'); document.getElementById('p-adults').classList.toggle('active', p==='adults'); }
-    
     setInterval(() => { document.getElementById('time').textContent = new Date().toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit' }); }, 1000);
     updateCals(); cloudLoad(); switchView('list');
 </script>
